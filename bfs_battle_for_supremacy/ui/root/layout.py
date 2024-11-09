@@ -2,16 +2,18 @@ import pygame
 from typing import Callable
 from config import WIDTH, HEIGHT
 from ui.root.component import Component
+from ui.root.keyboard_event_handler import KeyboardEventHandler
 
 
-class Layout(Component):
+class Layout(Component, KeyboardEventHandler):
     def __init__(
         self,
         on_click: Callable = None,
         on_hover: Callable = None,
         on_hover_end: Callable = None,
     ):
-        super().__init__(
+        Component.__init__(
+            self,
             0,
             0,
             WIDTH,

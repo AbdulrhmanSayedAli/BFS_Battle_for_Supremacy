@@ -34,6 +34,9 @@ class Engine:
                     pygame.MOUSEBUTTONUP,
                 ]:
                     self.layout.handle_mouse_event(event)
+
+                if event.type == pygame.KEYDOWN:
+                    pass
             self.layout.draw(self.screen)
 
             pygame.display.flip()
