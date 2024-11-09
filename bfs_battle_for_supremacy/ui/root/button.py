@@ -15,6 +15,7 @@ class Button(Component):
         secondary_color,
         text: str,
         font: pygame.font.Font,
+        font_color="white",
         on_click: Callable = None,
         on_hover: Callable = None,
         on_hover_end: Callable = None,
@@ -30,13 +31,14 @@ class Button(Component):
         )
         self.color = color
         self.secondary_color = secondary_color
+        self.font_color = font_color
         self.text = text
         self.font = font
 
     def draw(self, screen):
         self.fill(self.color)
 
-        text_surf = self.font.render(self.text, True, (255, 255, 255))
+        text_surf = self.font.render(self.text, True, self.font_color)
         text_rect = text_surf.get_rect(
             center=(self.rect.width // 2, self.rect.height // 2)
         )
