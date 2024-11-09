@@ -35,7 +35,7 @@ class Button(Component):
         self.text = text
         self.font = font
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.Surface):
         self.fill(self.color)
 
         text_surf = self.font.render(self.text, True, self.font_color)
