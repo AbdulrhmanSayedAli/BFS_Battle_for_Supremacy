@@ -1,14 +1,15 @@
 from ui.root.component import Component
 from ui.root.button import Button
+from ui.root.text import Text
 from ui.root.layout import Layout
 from ui.engine import Engine
 import pygame
 
 engine = Engine()
-font = pygame.font.Font(None, 26)
+font = pygame.font.Font(None, 56)
 
 
-c = Button(
+button = Button(
     10,
     10,
     200,
@@ -19,17 +20,22 @@ c = Button(
     font=font,
 )
 
+text = Text(
+    500, 100, "red", "blue", "Hi this is a text", font, background_color="grey"
+)
+
 
 def d(c: Component, event):
     c.x += 10
     c.y += 10
 
 
-c.on_click = d
+button.on_click = d
 
 
 layout = Layout()
-layout.add_component(c)
+layout.add_component(button)
+layout.add_component(text)
 layout.fill("grey")
 
 
