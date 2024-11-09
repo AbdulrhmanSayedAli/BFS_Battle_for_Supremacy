@@ -1,10 +1,23 @@
 from ui.root.component import Component
+from ui.root.button import Button
 from ui.root.layout import Layout
 from ui.engine import Engine
+import pygame
+
+engine = Engine()
+font = pygame.font.Font(None, 26)
 
 
-c = Component(10, 10, 100, 100)
-c.fill("red")
+c = Button(
+    10,
+    10,
+    200,
+    100,
+    color="red",
+    secondary_color="blue",
+    text="click me here",
+    font=font,
+)
 
 
 def d(c: Component, event):
@@ -20,6 +33,6 @@ layout.add_component(c)
 layout.fill("grey")
 
 
-engine = Engine(layouts=[layout])
+engine.layouts = [layout]
 
 engine.start()

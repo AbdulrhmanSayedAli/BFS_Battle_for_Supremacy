@@ -6,7 +6,10 @@ import sys
 
 class Engine:
     def __init__(
-        self, layouts: list[Layout], caption="Cards", current_layout: int = 0
+        self,
+        layouts: list[Layout] = [],
+        caption="Cards",
+        current_layout: int = 0,
     ):
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
