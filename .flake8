@@ -1,0 +1,2 @@
+max-line-length = 88
+ignore = E203, W503  # E203 and W503 are commonly ignored in Black-compatible setups
