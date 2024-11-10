@@ -16,14 +16,17 @@ class Engine:
     def init(
         layouts: list[Layout] = [], caption="Cards", current_layout: int = 0
     ):
+        Engine.init_pygame(caption)
+        Engine.running = True
+        Engine.layouts = layouts
+        Engine.current_layout = current_layout
+
+    @staticmethod
+    def init_pygame(caption):
         pygame.init()
         Engine.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption(caption)
-        Engine.running = True
         Engine.clock = pygame.time.Clock()
-
-        Engine.layouts = layouts
-        Engine.current_layout = current_layout
 
     @staticmethod
     def layout() -> Layout:
