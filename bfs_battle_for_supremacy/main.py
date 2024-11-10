@@ -2,7 +2,9 @@ from ui.root.component import Component
 from ui.root.button import Button
 from ui.root.text import Text
 from ui.root.layout import Layout
+from ui.root.image import Image
 from ui.engine import Engine
+from config import WIDTH, HEIGHT, IMAGES_PATH
 import pygame
 
 engine = Engine()
@@ -31,7 +33,10 @@ def d(c: Component, event):
 button.on_click = d
 
 
+image = Image(0, 0, WIDTH, HEIGHT, IMAGES_PATH + "main_menu_background.webp")
+
 layout = Layout()
+layout.add_component(image)
 layout.add_component(button)
 layout.add_component(text)
 layout.fill("grey")
