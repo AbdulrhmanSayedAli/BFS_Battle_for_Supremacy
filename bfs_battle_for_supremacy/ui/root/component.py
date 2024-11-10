@@ -14,7 +14,7 @@ class Component(pygame.Surface, MouseEventHandler):
         on_hover: Callable = None,
         on_hover_end: Callable = None,
     ):
-        pygame.Surface.__init__(self, (width, height))
+        pygame.Surface.__init__(self, (width, height), pygame.SRCALPHA)
 
         self._x = x
         self._y = y

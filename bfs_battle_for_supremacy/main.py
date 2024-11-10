@@ -1,10 +1,28 @@
 from ui.root.component import Component
+from ui.root.button import Button
+from ui.root.text import Text
 from ui.root.layout import Layout
+from ui.root.image import Image
 from ui.engine import Engine
+from config import WIDTH, HEIGHT, IMAGES_PATH
+import pygame
+
+engine = Engine()
+font = pygame.font.Font(None, 56)
 
 
-c = Component(10, 10, 100, 100)
-c.fill("red")
+button = Button(
+    10,
+    10,
+    200,
+    100,
+    color="red",
+    secondary_color="blue",
+    text="click me here",
+    font=font,
+)
+
+text = Text(500, 100, "red", "blue", "Hi this is a text", font)
 
 
 def d(c: Component, event):
@@ -12,14 +30,18 @@ def d(c: Component, event):
     c.y += 10
 
 
-c.on_click = d
+button.on_click = d
 
+
+image = Image(0, 0, WIDTH, HEIGHT, IMAGES_PATH + "main_menu_background.webp")
 
 layout = Layout()
-layout.add_component(c)
+layout.add_component(image)
+layout.add_component(button)
+layout.add_component(text)
 layout.fill("grey")
 
 
-engine = Engine(layouts=[layout])
+engine.layouts = [layout]
 
 engine.start()

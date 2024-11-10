@@ -24,6 +24,10 @@ class Layout(Component, KeyboardEventHandler):
         )
 
         self.components: list[Component] = []
+        self.setup_components()
+
+    def setup_components(self):
+        pass
 
     def draw(self, screen: pygame.Surface):
         for component in self.components:
