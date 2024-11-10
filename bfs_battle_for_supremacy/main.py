@@ -20,9 +20,7 @@ button = Button(
     font=font,
 )
 
-text = Text(
-    500, 100, "red", "blue", "Hi this is a text", font, background_color="grey"
-)
+text = Text(500, 100, "red", "blue", "Hi this is a text", font)
 
 
 def d(c: Component, event):

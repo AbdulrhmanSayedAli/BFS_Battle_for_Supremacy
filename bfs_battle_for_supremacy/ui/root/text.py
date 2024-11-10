@@ -15,7 +15,7 @@ class Text(Component):
         font: pygame.font.Font,
         width: float = None,
         height: float = None,
-        background_color=None,
+        background_color=(0, 0, 0, 0),
         on_click: Callable = None,
         on_hover: Callable = None,
         on_hover_end: Callable = None,
