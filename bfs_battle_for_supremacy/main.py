@@ -7,7 +7,7 @@ from ui.engine import Engine
 from config import WIDTH, HEIGHT, IMAGES_PATH
 import pygame
 
-engine = Engine()
+Engine.init()
 font = pygame.font.Font(None, 56)
 
 
@@ -42,6 +42,5 @@ layout.add_component(text)
 layout.fill("grey")
 
 
-engine.layouts = [layout]
-
-engine.start()
+Engine.layouts = [layout]
+Engine.start()
