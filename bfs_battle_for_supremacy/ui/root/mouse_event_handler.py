@@ -17,9 +17,22 @@ class MouseEventHandler:
         self.on_hover = on_hover
         self.on_hover_end = on_hover_end
 
-    def handle_mouse_event(self, event: pygame.event.Event):
+    def merge_rects(self, rect1: pygame.Rect, rect2: pygame.Rect):
+        return pygame.Rect(
+            rect1.x + rect2.x,
+            rect1.y + rect2.y,
+            rect1.width,
+            rect1.height,
+        )
+
+    def handle_mouse_event(
+        self,
+        event: pygame.event.Event,
+        rect: pygame.Rect = pygame.Rect(0, 0, 0, 0),
+    ):
+        cur_rect = self.merge_rects(self.rect, rect)
         mouse_pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(mouse_pos):
+        if cur_rect.collidepoint(mouse_pos):
             if not self.is_hovered:
                 self.is_hovered = True
                 self._on_hover_listener(event)

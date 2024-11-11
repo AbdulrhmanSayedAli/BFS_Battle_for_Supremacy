@@ -37,7 +37,8 @@ class Layout(Component, KeyboardEventHandler):
         Removes a specified component from the layout.
 
     remove_component_by_index(index: int):
-        Removes a component from the layout by its index in the components list.
+        Removes a component from the layout by its index in
+        the components list.
 
     handle_mouse_event(event: pygame.event.Event):
         Forwards mouse events to the layout and its child components.
@@ -63,7 +64,8 @@ class Layout(Component, KeyboardEventHandler):
             Callback function triggered on a hover event within the layout.
 
         on_hover_end : Callable, optional
-            Callback function triggered when a hover event ends within the layout.
+            Callback function triggered when a hover event ends within
+            the layout.
         """
         Component.__init__(
             self,
@@ -144,19 +146,27 @@ class Layout(Component, KeyboardEventHandler):
         Parameters:
         -----------
         index : int
-            The index of the component to remove from the layout's components list.
+            The index of the component to remove from the layout's
+            components list.
         """
         self.components.pop(index)
 
-    def handle_mouse_event(self, event: pygame.event.Event):
+    def handle_mouse_event(
+        self,
+        event: pygame.event.Event,
+        rect: pygame.Rect = pygame.Rect(0, 0, 0, 0),
+    ):
         """
-        Handles mouse events for the layout and forwards them to child components.
+        Handles mouse events for the layout and forwards them to
+        child components.
 
         Parameters:
         -----------
         event : pygame.event.Event
             The Pygame event representing the mouse action.
+        rect : pygame.Rect
+            Move the Rect by the Parent Rect
         """
         super().handle_mouse_event(event)
         for component in self.components:
-            component.handle_mouse_event(event)
+            component.handle_mouse_event(event, rect)

@@ -15,23 +15,26 @@ class Center(Component):
         on_hover: Callable = None,
         on_hover_end: Callable = None,
     ):
-        super().__init__(x, y, width, height, on_click, on_hover, on_hover_end)
         self.component = component
-        new_x = (
-            self.x + (self.rect.width / 2) - (self.component.rect.width / 2)
-        )
-        new_y = (
-            self.y + (self.rect.height / 2) - (self.component.rect.height / 2)
-        )
+        new_x = x + (width / 2) - (self.component.rect.width / 2)
+        new_y = y + (height / 2) - (self.component.rect.height / 2)
 
         self.component.x += new_x
         self.component.y += new_y
+
+        super().__init__(x, y, width, height, on_click, on_hover, on_hover_end)
 
     def draw(self, screen: pygame.Surface):
         self.fill((0, 0, 0, 0))
         self.component.draw(self)
         super().draw(screen)
 
-    def handle_mouse_event(self, event: pygame.event.Event):
+    def handle_mouse_event(
+        self,
+        event: pygame.event.Event,
+        rect: pygame.Rect = pygame.Rect(0, 0, 0, 0),
+    ):
         super().handle_mouse_event(event)
-        self.component.handle_mouse_event(event)
+        self.component.handle_mouse_event(
+            event, self.merge_rects(self.rect, rect)
+        )

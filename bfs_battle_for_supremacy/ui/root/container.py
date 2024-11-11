@@ -24,7 +24,13 @@ class Container(Component):
             component.draw(self)
         super().draw(screen)
 
-    def handle_mouse_event(self, event: pygame.event.Event):
+    def handle_mouse_event(
+        self,
+        event: pygame.event.Event,
+        rect: pygame.Rect = pygame.Rect(0, 0, 0, 0),
+    ):
         super().handle_mouse_event(event)
         for component in self.components:
-            component.handle_mouse_event(event)
+            component.handle_mouse_event(
+                event, self.merge_rects(self.rect, rect)
+            )
