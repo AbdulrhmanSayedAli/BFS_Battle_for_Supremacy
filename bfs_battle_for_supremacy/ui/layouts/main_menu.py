@@ -1,49 +1,75 @@
 from ui.root.layout import Layout
 from ui.root.button import Button
 from ui.root.image import Image
-from ui.root.text import Text
 from ui.root.rectangle import Rectangle
-from ui.utils import get_font
+from ui.root.center import Center
+from ui.root.container import Container
+from ui.utils import get_font, main_color, main_color_hover
 from config import WIDTH, HEIGHT, IMAGES_PATH
 
 
 class MainMenu(Layout):
+
+    def on_quit_clicked(button, event):
+        pass
+
     def setup_components(self):
-        self.button = Button(
-            10,
-            10,
+        self.start_button = Button(
+            0,
+            0,
             200,
             100,
-            color="red",
-            secondary_color="blue",
-            text="1",
+            color=main_color,
+            secondary_color=main_color_hover,
+            text="Start",
             font=get_font(40),
+            border_radius=10,
         )
 
-        def d(c, event):
-            c.x += 10
-            c.y += 10
-            self.button.text = str(int(self.button.text) + 1)
-
-        self.button.on_click = d
-
-        background = Image(
-            0, 0, WIDTH, HEIGHT, IMAGES_PATH + "main_menu_background.webp"
+        self.options_button = Button(
+            0,
+            120,
+            200,
+            100,
+            color=main_color,
+            secondary_color=main_color_hover,
+            text="Options",
+            font=get_font(40),
+            border_radius=10,
         )
 
-        blur = Rectangle(0, 0, WIDTH, HEIGHT, background_color=(0, 0, 0, 140))
+        self.quit_button = Button(
+            0,
+            240,
+            200,
+            100,
+            color=main_color,
+            secondary_color=main_color_hover,
+            text="Quit",
+            font=get_font(40),
+            border_radius=10,
+        )
 
-        text = Text(500, 100, "red", "blue", "Hi this is a text", get_font(40))
-
-        self.add_component(background)
-        self.add_component(blur)
-        self.add_component(self.button)
-        self.add_component(text)
-
-    def on_5(self):
-        self.button.text = "done"
-        self.button.on_click = None
-
-    def update_components(self):
-        if self.button.text == "5":
-            self.on_5()
+        self.add_component(
+            Image(
+                0, 0, WIDTH, HEIGHT, IMAGES_PATH + "main_menu_background.webp"
+            )
+        )
+        self.add_component(
+            Rectangle(0, 0, WIDTH, HEIGHT, background_color=(0, 0, 0, 140))
+        )
+        self.add_component(
+            Center(
+                0,
+                0,
+                WIDTH,
+                HEIGHT,
+                Container(
+                    0,
+                    0,
+                    200,
+                    340,
+                    [self.start_button, self.options_button, self.quit_button],
+                ),
+            )
+        )
