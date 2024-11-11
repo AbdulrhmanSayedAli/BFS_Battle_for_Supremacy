@@ -9,22 +9,23 @@ from config import WIDTH, HEIGHT, IMAGES_PATH
 
 class MainMenu(Layout):
     def setup_components(self):
-        button = Button(
+        self.button = Button(
             10,
             10,
             200,
             100,
             color="red",
             secondary_color="blue",
-            text="click me here",
+            text="1",
             font=get_font(40),
         )
 
         def d(c, event):
             c.x += 10
             c.y += 10
+            self.button.text = str(int(self.button.text) + 1)
 
-        button.on_click = d
+        self.button.on_click = d
 
         background = Image(
             0, 0, WIDTH, HEIGHT, IMAGES_PATH + "main_menu_background.webp"
@@ -36,6 +37,13 @@ class MainMenu(Layout):
 
         self.add_component(background)
         self.add_component(blur)
-        self.add_component(button)
+        self.add_component(self.button)
         self.add_component(text)
-        super().setup_components()
+
+    def on_5(self):
+        self.button.text = "done"
+        self.button.on_click = None
+
+    def update_components(self):
+        if self.button.text == "5":
+            self.on_5()

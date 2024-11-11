@@ -29,7 +29,11 @@ class Layout(Component, KeyboardEventHandler):
     def setup_components(self):
         pass
 
+    def update_components(self):
+        pass
+
     def draw(self, screen: pygame.Surface):
+        self.update_components()
         for component in self.components:
             component.draw(self)
         super().draw(screen)
