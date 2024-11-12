@@ -57,3 +57,7 @@ class Engine:
 
             pygame.display.flip()
             Engine.clock.tick(FRAME_RATE_PER_SECOND)
+
+    @staticmethod
+    def quit():
+        Engine.running = False

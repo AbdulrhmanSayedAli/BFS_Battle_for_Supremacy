@@ -7,12 +7,10 @@ from ui.root.container import Container
 from ui.utils import get_font, main_color, main_color_hover
 from config import WIDTH, HEIGHT, IMAGES_PATH
 from ui.root.dialog import Dialog
+from ui.engine import Engine
 
 
 class MainMenu(Layout):
-
-    def on_quit_clicked(button, event):
-        pass
 
     def setup_components(self):
         self.start_button = Button(
@@ -49,13 +47,19 @@ class MainMenu(Layout):
             text="Quit",
             font=get_font(40),
             border_radius=10,
+            on_click=lambda c, e: self.add_component(self.quit_dialog),
         )
 
-        self.dialog = Dialog(
-            "title",
-            "Some message",
+        def quit_dialog_ok():
+            self.remove_component(self.quit_dialog)
+            Engine.running = False
+
+        self.quit_dialog = Dialog(
+            "Warning",
+            "Are you sure you want to exit?",
             background_color="white",
-            on_ok=lambda: self.remove_component(self.dialog),
+            on_ok=quit_dialog_ok,
+            on_cancel=lambda: self.remove_component(self.quit_dialog),
         )
 
         self.add_component(
@@ -81,4 +85,3 @@ class MainMenu(Layout):
                 ),
             )
         )
-        self.add_component(self.dialog)

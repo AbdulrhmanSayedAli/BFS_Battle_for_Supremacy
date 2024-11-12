@@ -54,7 +54,7 @@ class Dialog(Container, KeyboardEventHandler):
             DIALOG_HEIGHT - 50,
             color="black",
             secondary_color="black",
-            text="press k for OK and n for cancel",
+            text="press K for ok and N for cancel",
             font=get_font(30),
             width=DIALOG_WIDTH,
             height=50,
