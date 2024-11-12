@@ -8,7 +8,6 @@ from ui.utils import get_font, main_color, main_color_hover
 from config import WIDTH, HEIGHT, IMAGES_PATH
 from ui.root.dialog import Dialog
 from ui.engine import Engine
-from ui.engine import Engine
 
 
 class MainMenu(Layout):
