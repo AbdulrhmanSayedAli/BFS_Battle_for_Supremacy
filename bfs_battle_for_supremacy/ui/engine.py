@@ -1,6 +1,6 @@
 from ui.root.layout import Layout
 import pygame
-from config import WIDTH, HEIGHT, FRAME_RATE_PER_SECOND
+from config import WIDTH, HEIGHT, FRAME_RATE_PER_SECOND, IMAGES_PATH
 import sys
 
 
@@ -26,6 +26,8 @@ class Engine:
         pygame.init()
         Engine.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption(caption)
+        icon_image = pygame.image.load(IMAGES_PATH + "icon.webp")
+        pygame.display.set_icon(icon_image)
         Engine.clock = pygame.time.Clock()
 
     @staticmethod
