@@ -86,3 +86,8 @@ class MainMenu(Layout):
                 ),
             )
         )
+
+        self.add_component(
+            Rectangle(15, 15, 110, 110, background_color="white")
+        )
+        self.add_component(Image(20, 20, 100, 100, IMAGES_PATH + "icon.webp"))
