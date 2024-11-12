@@ -16,6 +16,7 @@ class Button(Component):
         text: str,
         font: pygame.font.Font,
         font_color="white",
+        border_radius: int = 0,
         on_click: Callable = None,
         on_hover: Callable = None,
         on_hover_end: Callable = None,
@@ -34,9 +35,13 @@ class Button(Component):
         self.font_color = font_color
         self.text = text
         self.font = font
+        self.border_radius = border_radius
 
     def draw(self, screen: pygame.Surface):
-        self.fill(self.color)
+        self.fill((0, 0, 0, 0))
+        pygame.draw.rect(
+            self, self.color, self.get_rect(), border_radius=self.border_radius
+        )
 
         text_surf = self.font.render(self.text, True, self.font_color)
         text_rect = text_surf.get_rect(

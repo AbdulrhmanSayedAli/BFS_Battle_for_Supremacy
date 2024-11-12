@@ -5,28 +5,41 @@ import sys
 
 
 class Engine:
-    def __init__(
-        self,
-        layouts: list[Layout] = [],
-        caption="Cards",
-        current_layout: int = 0,
+    # Static class variables
+    screen = None
+    running = True
+    clock = None
+    layouts = []
+    current_layout = 0
+
+    @staticmethod
+    def init(
+        layouts: list[Layout] = [], caption="Cards", current_layout: int = 0
     ):
+        Engine.init_pygame(caption)
+        Engine.running = True
+        Engine.layouts = layouts
+        Engine.current_layout = current_layout
+
+    @staticmethod
+    def init_pygame(caption):
         pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        Engine.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption(caption)
-        self.running = True
-        self.clock = pygame.time.Clock()
+        Engine.clock = pygame.time.Clock()
 
-        self.layouts = layouts
-        self.current_layout = current_layout
+    @staticmethod
+    def layout() -> Layout:
+        return Engine.layouts[Engine.current_layout]
 
-    @property
-    def layout(self) -> Layout:
-        return self.layouts[self.current_layout]
+    @staticmethod
+    def navigate(index: int):
+        Engine.current_layout = index
 
-    def start(self):
-        while self.running:
-            self.layout.fill("grey")
+    @staticmethod
+    def start():
+        while Engine.running:
+            Engine.layout().fill("grey")
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -36,11 +49,15 @@ class Engine:
                     pygame.MOUSEMOTION,
                     pygame.MOUSEBUTTONUP,
                 ]:
-                    self.layout.handle_mouse_event(event)
+                    Engine.layout().handle_mouse_event(event)
 
                 if event.type == pygame.KEYDOWN:
-                    pass
-            self.layout.draw(self.screen)
+                    Engine.layout().handle_keyboard_event(event)
+            Engine.layout().draw(Engine.screen)
 
             pygame.display.flip()
-            self.clock.tick(FRAME_RATE_PER_SECOND)
+            Engine.clock.tick(FRAME_RATE_PER_SECOND)
+
+    @staticmethod
+    def quit():
+        Engine.running = False
