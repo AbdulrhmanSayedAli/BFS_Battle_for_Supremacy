@@ -6,6 +6,7 @@ from ui.root.center import Center
 from ui.root.container import Container
 from ui.utils import get_font, main_color, main_color_hover
 from config import WIDTH, HEIGHT, IMAGES_PATH
+from ui.root.dialog import Dialog
 
 
 class MainMenu(Layout):
@@ -50,6 +51,13 @@ class MainMenu(Layout):
             border_radius=10,
         )
 
+        self.dialog = Dialog(
+            "title",
+            "Some message",
+            background_color="white",
+            on_ok=lambda: self.remove_component(self.dialog),
+        )
+
         self.add_component(
             Image(
                 0, 0, WIDTH, HEIGHT, IMAGES_PATH + "main_menu_background.webp"
@@ -73,3 +81,4 @@ class MainMenu(Layout):
                 ),
             )
         )
+        self.add_component(self.dialog)

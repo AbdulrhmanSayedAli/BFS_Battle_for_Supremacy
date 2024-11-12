@@ -170,3 +170,9 @@ class Layout(Component, KeyboardEventHandler):
         super().handle_mouse_event(event)
         for component in self.components:
             component.handle_mouse_event(event, rect)
+
+    def handle_keyboard_event(self, event: pygame.event.Event):
+        for component in self.components:
+            if hasattr(component, "handle_keyboard_event"):
+                component.handle_keyboard_event(event)
+        super().handle_keyboard_event(event)

@@ -52,7 +52,7 @@ class Engine:
                     Engine.layout().handle_mouse_event(event)
 
                 if event.type == pygame.KEYDOWN:
-                    pass
+                    Engine.layout().handle_keyboard_event(event)
             Engine.layout().draw(Engine.screen)
 
             pygame.display.flip()

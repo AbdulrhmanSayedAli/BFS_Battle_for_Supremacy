@@ -23,7 +23,7 @@ class Text(Component):
         self.color = color
         self.secondary_color = secondary_color
         self.background_color = background_color
-        self.text = text
+        self._text = text
         self.font = font
         self.line_spacing = 5
         self.text_lines = []
@@ -39,7 +39,7 @@ class Text(Component):
             line_height * len(self.text_lines)
             + (len(self.text_lines) - 1) * self.line_spacing
         )
-        print(self.text, self.text_lines, height)
+        self.height = height
 
         super().__init__(
             x,
@@ -51,9 +51,31 @@ class Text(Component):
             on_hover_end,
         )
 
+    @property
+    def text(self):
+        return self._text
+
+    @text.setter
+    def text(self, value):
+        self._text = value
+        self = self.__init__(
+            self.x,
+            self.y,
+            self.color,
+            self.secondary_color,
+            self.text,
+            self.font,
+            self.width,
+            self.height,
+            self.background_color,
+            self.on_click,
+            self.on_hover,
+            self.on_hover_end,
+        )
+
     def split_text_into_lines(self):
         """Splits the text into lines that fit within the specified width."""
-        chars = self.text
+        chars = self._text
         line = ""
         self.text_lines = []
 
