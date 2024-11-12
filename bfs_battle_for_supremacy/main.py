@@ -1,11 +1,9 @@
 from ui.engine import Engine
 from ui.layouts.main_menu import MainMenu
+from ui.layouts.game import Game
 
 Engine.init()
 
 
-layout = MainMenu()
-
-
-Engine.layouts = [layout]
+Engine.layouts = [MainMenu(), Game()]
 Engine.start()

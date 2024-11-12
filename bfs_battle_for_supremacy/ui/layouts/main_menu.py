@@ -8,6 +8,7 @@ from ui.utils import get_font, main_color, main_color_hover
 from config import WIDTH, HEIGHT, IMAGES_PATH
 from ui.root.dialog import Dialog
 from ui.engine import Engine
+from ui.engine import Engine
 
 
 class MainMenu(Layout):
@@ -23,6 +24,7 @@ class MainMenu(Layout):
             text="Start",
             font=get_font(40),
             border_radius=10,
+            on_click=lambda c, e: Engine.navigate(1),
         )
 
         self.options_button = Button(
