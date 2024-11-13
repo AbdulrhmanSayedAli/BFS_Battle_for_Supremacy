@@ -20,3 +20,11 @@ class Board(Container):
         super().__init__(
             x, y, width, height, components, on_click, on_hover, on_hover_end
         )
+
+    def select_tile(self, pos):
+        if self.components[pos].selected:
+            self.components[pos].selected = False
+            return
+        for i in range(len(self.components)):
+            self.components[i].selected = False
+        self.components[pos].selected = True

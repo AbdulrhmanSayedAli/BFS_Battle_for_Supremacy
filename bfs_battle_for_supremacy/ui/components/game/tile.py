@@ -1,12 +1,12 @@
 from typing import Callable
 from pygame.event import Event
-from ui.root.rectangle import Rectangle
+from ui.root.component import Component
 from ui.root.image import Image
 from ui.utils import tile_main_color, tile_secondary_color
 from config import BOARD_SIZE_HEIGHT
 
 
-class Tile(Rectangle):
+class Tile(Component):
     def __init__(
         self,
         x: float,
@@ -15,6 +15,7 @@ class Tile(Rectangle):
         height: float,
         pos_x: int,
         pos_y: int,
+        selected: bool = False,
         image_path: str = None,
         on_click: Callable = None,
         on_hover: Callable = None,
@@ -22,6 +23,7 @@ class Tile(Rectangle):
     ):
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.selected = selected
         self._image_path = image_path
         self.image: Image = None
         if self._image_path:
@@ -37,7 +39,6 @@ class Tile(Rectangle):
             y,
             width,
             height,
-            self.board_color,
             on_click,
             on_hover,
             on_hover_end,
@@ -58,6 +59,9 @@ class Tile(Rectangle):
 
     @property
     def board_color(self):
+        if self.selected:
+            return (227, 135, 109)
+
         return (
             tile_main_color
             if (self.pos + self.pos_y) % 2 == 0
@@ -65,7 +69,7 @@ class Tile(Rectangle):
         )
 
     def draw(self, screen):
-        self.fill(self.background_color)
+        self.fill(self.board_color)
         if self.image:
             self.image.draw(self)
         screen.blit(self, self.rect.topleft)

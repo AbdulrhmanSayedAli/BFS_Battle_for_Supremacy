@@ -4,7 +4,8 @@ from ui.root.center import Center
 from ui.components.game.board import Board
 from ui.components.game.tile import Tile
 from ui.utils import get_font
-from config import BOARD_SIZE_WIDTH, BOARD_SIZE_HEIGHT, IMAGES_PATH
+from config import BOARD_SIZE_WIDTH, BOARD_SIZE_HEIGHT, IMAGES_PATH, WIDTH
+from ui.utils import main_color, main_color_hover
 
 BOARD_WIDTH = 700
 BOARD_HEIGHT = 700
@@ -30,6 +31,7 @@ class Game(Layout):
                         tile_height,
                         j,
                         i,
+                        on_click=lambda c, e: self.board.select_tile(c.pos),
                     )
                 )
             res.append(cur_res)
@@ -81,7 +83,33 @@ class Game(Layout):
             ),
         ]
 
+        self.draw_card_button = Button(
+            BOARD_WIDTH + 40,
+            SELECTION_HEIGHT + STATS_HEIGHT + 10,
+            120,
+            80,
+            main_color,
+            main_color_hover,
+            "draw card",
+            get_font(30),
+            border_radius=10,
+        )
+
+        self.end_turn_button = Button(
+            WIDTH - 160,
+            SELECTION_HEIGHT + STATS_HEIGHT + 10,
+            120,
+            80,
+            main_color,
+            main_color_hover,
+            "end turn",
+            get_font(30),
+            border_radius=10,
+        )
+
         self.add_component(self.board)
         self.add_component(self.stats[0])
         self.add_component(self.stats[1])
         self.add_component(self.selection)
+        self.add_component(self.draw_card_button)
+        self.add_component(self.end_turn_button)
