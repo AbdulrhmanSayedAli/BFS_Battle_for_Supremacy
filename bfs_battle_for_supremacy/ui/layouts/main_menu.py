@@ -1,13 +1,20 @@
-from ui.root.layout import Layout
-from ui.root.button import Button
-from ui.root.image import Image
-from ui.root.rectangle import Rectangle
-from ui.root.center import Center
-from ui.root.container import Container
-from ui.utils import get_font, main_color, main_color_hover
-from config import WIDTH, HEIGHT, IMAGES_PATH
-from ui.root.dialog import Dialog
-from ui.engine import Engine
+from bfs_battle_for_supremacy.ui.root import (
+    Layout,
+    Button,
+    Image,
+    Rectangle,
+    Center,
+    Container,
+    Dialog,
+)
+from bfs_battle_for_supremacy.ui.utils import (
+    get_font,
+    main_color,
+    main_color_hover,
+)
+from bfs_battle_for_supremacy.config import WIDTH, HEIGHT, IMAGES_PATH
+from bfs_battle_for_supremacy.ui.engine import Engine
+import os
 
 
 class MainMenu(Layout):
@@ -65,7 +72,11 @@ class MainMenu(Layout):
 
         self.add_component(
             Image(
-                0, 0, WIDTH, HEIGHT, IMAGES_PATH + "main_menu_background.webp"
+                0,
+                0,
+                WIDTH,
+                HEIGHT,
+                os.path.join(IMAGES_PATH, "main_menu_background.webp"),
             )
         )
         self.add_component(
@@ -90,4 +101,6 @@ class MainMenu(Layout):
         self.add_component(
             Rectangle(15, 15, 110, 110, background_color="white")
         )
-        self.add_component(Image(20, 20, 100, 100, IMAGES_PATH + "icon.webp"))
+        self.add_component(
+            Image(20, 20, 100, 100, os.path.join(IMAGES_PATH, "icon.webp"))
+        )

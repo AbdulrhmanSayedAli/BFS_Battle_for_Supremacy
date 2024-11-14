@@ -1,11 +1,18 @@
 from pygame.event import Event
-from ui.root.text import Text
-from ui.root.container import Container
-from ui.root.rectangle import Rectangle
-from ui.root.keyboard_event_handler import KeyboardEventHandler
-from ui.utils import get_font
-from ui.root.center import Center
-from config import DIALOG_HEIGHT, DIALOG_WIDTH, WIDTH, HEIGHT
+from bfs_battle_for_supremacy.ui.root.text import Text
+from bfs_battle_for_supremacy.ui.root.container import Container
+from bfs_battle_for_supremacy.ui.root.rectangle import Rectangle
+from bfs_battle_for_supremacy.ui.root.keyboard_event_handler import (
+    KeyboardEventHandler,
+)
+from bfs_battle_for_supremacy.ui.utils import get_font
+from .center import Center
+from bfs_battle_for_supremacy.config import (
+    DIALOG_HEIGHT,
+    DIALOG_WIDTH,
+    WIDTH,
+    HEIGHT,
+)
 from typing import Callable
 import pygame
 
