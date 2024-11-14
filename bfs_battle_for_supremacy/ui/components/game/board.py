@@ -1,5 +1,4 @@
 from typing import Callable
-from bfs_battle_for_supremacy.ui.root.component import Component
 from ui.root.container import Container
 from ui.components.game.tile import Tile
 

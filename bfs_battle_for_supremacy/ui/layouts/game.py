@@ -1,6 +1,5 @@
 from ui.root.layout import Layout
 from ui.root.button import Button
-from ui.root.center import Center
 from ui.components.game.board import Board
 from ui.components.game.tile import Tile
 from ui.utils import get_font
@@ -66,8 +65,8 @@ class Game(Layout):
                 SELECTION_HEIGHT,
                 STATS_WIDTH / 2,
                 STATS_HEIGHT,
-                "blue",
-                "blue",
+                "red",
+                "red",
                 "player 1 stats",
                 get_font(20),
             ),
@@ -76,8 +75,8 @@ class Game(Layout):
                 SELECTION_HEIGHT,
                 STATS_WIDTH / 2,
                 STATS_HEIGHT,
-                "red",
-                "red",
+                "blue",
+                "blue",
                 "player 2 stats",
                 get_font(20),
             ),
