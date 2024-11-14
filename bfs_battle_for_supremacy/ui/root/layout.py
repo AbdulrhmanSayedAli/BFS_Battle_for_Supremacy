@@ -1,8 +1,10 @@
 import pygame
 from typing import Callable
-from config import WIDTH, HEIGHT
-from ui.root.component import Component
-from ui.root.keyboard_event_handler import KeyboardEventHandler
+from bfs_battle_for_supremacy.config import WIDTH, HEIGHT
+from bfs_battle_for_supremacy.ui.root.component import Component
+from bfs_battle_for_supremacy.ui.root.keyboard_event_handler import (
+    KeyboardEventHandler,
+)
 
 
 class Layout(Component, KeyboardEventHandler):

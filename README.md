@@ -52,12 +52,21 @@ exit
 
 ## Running the Application
 
-To start the application, use the following command:
+To start the application in debug mode, use the following command:
 
 ```bash
 cd bfs_battle_for_supremacy
 poetry run python main.py
 ```
+
+To build the final `exe` file and run it in production mode, use the following command:
+
+```bash
+cd bfs_battle_for_supremacy
+poetry run pyinstaller main.spec
+```
+
+and then locate the `exe` file in `bfs_battle_for_supremacy\dist\bfs\bfs.exe`
 
 ## Adding New Packages
 

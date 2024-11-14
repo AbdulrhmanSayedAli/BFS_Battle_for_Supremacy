@@ -1,9 +1,8 @@
-from ui.root.layout import Layout
-from ui.root.button import Button
-from ui.components.game.board import Board
-from ui.utils import get_font
-from config import WIDTH
-from ui.utils import main_color, main_color_hover
+from bfs_battle_for_supremacy.ui.root import Layout, Button
+from bfs_battle_for_supremacy.ui.components.game.board import Board
+from bfs_battle_for_supremacy.ui.utils import get_font
+from bfs_battle_for_supremacy.config import WIDTH
+from bfs_battle_for_supremacy.ui.utils import main_color, main_color_hover
 
 BOARD_WIDTH = 700
 BOARD_HEIGHT = 700

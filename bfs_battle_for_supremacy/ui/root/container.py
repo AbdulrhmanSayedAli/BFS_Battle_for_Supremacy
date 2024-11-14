@@ -1,5 +1,5 @@
 from typing import Callable
-from ui.root.component import Component
+from bfs_battle_for_supremacy.ui.root.component import Component
 import pygame
 
 

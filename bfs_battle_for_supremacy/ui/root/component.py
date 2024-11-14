@@ -1,6 +1,8 @@
 import pygame
 from typing import Callable
-from ui.root.mouse_event_handler import MouseEventHandler
+from bfs_battle_for_supremacy.ui.root.mouse_event_handler import (
+    MouseEventHandler,
+)
 
 
 class Component(pygame.Surface, MouseEventHandler):

@@ -1,7 +1,13 @@
-from ui.root.layout import Layout
+from bfs_battle_for_supremacy.ui.root import Layout
 import pygame
-from config import WIDTH, HEIGHT, FRAME_RATE_PER_SECOND, IMAGES_PATH
+from bfs_battle_for_supremacy.config import (
+    WIDTH,
+    HEIGHT,
+    FRAME_RATE_PER_SECOND,
+    IMAGES_PATH,
+)
 import sys
+import os
 
 
 class Engine:
@@ -26,7 +32,7 @@ class Engine:
         pygame.init()
         Engine.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption(caption)
-        icon_image = pygame.image.load(IMAGES_PATH + "icon.webp")
+        icon_image = pygame.image.load(os.path.join(IMAGES_PATH, "icon.webp"))
         pygame.display.set_icon(icon_image)
         Engine.clock = pygame.time.Clock()
 

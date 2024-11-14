@@ -1,9 +1,11 @@
 from typing import Callable
 from pygame.event import Event
-from ui.root.component import Component
-from ui.root.image import Image
-from ui.utils import tile_main_color, tile_secondary_color
-from config import BOARD_SIZE_HEIGHT
+from bfs_battle_for_supremacy.ui.root import Component, Image
+from bfs_battle_for_supremacy.ui.utils import (
+    tile_main_color,
+    tile_secondary_color,
+)
+from bfs_battle_for_supremacy.config import BOARD_SIZE_HEIGHT
 
 
 class Tile(Component):

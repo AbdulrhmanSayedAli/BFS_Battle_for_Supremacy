@@ -1,7 +1,12 @@
 from typing import Callable
-from ui.root.container import Container
-from ui.components.game.tile import Tile
-from config import BOARD_SIZE_WIDTH, BOARD_SIZE_HEIGHT, IMAGES_PATH
+from bfs_battle_for_supremacy.ui.root import Container
+from bfs_battle_for_supremacy.ui.components.game.tile import Tile
+from bfs_battle_for_supremacy.config import (
+    BOARD_SIZE_WIDTH,
+    BOARD_SIZE_HEIGHT,
+    IMAGES_PATH,
+)
+import os
 
 
 class Board(Container):
@@ -49,9 +54,9 @@ class Board(Container):
                     )
                 )
             res.append(cur_res)
-        res[0][0].image_path = IMAGES_PATH + "player1.webp"
+        res[0][0].image_path = os.path.join(IMAGES_PATH, "player1.webp")
         res[BOARD_SIZE_HEIGHT - 1][BOARD_SIZE_WIDTH - 1].image_path = (
-            IMAGES_PATH + "player2.webp"
+            os.path.join(IMAGES_PATH, "player2.webp")
         )
         return res
 
