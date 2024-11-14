@@ -1,8 +1,9 @@
 from bfs_battle_for_supremacy.game_logic.entities.map import Map
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 
+
 class MapManager:
-    game_map = Map(10, 10)  
+    game_map = Map(10, 10)
 
     @staticmethod
     def check_availability(square: Square):

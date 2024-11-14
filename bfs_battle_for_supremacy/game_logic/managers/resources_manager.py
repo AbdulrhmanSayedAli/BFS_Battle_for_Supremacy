@@ -1,5 +1,6 @@
 from bfs_battle_for_supremacy.game_logic.entities.resources import Resources
 
+
 class ResourcesManager:
 
     @staticmethod
@@ -14,7 +15,7 @@ class ResourcesManager:
     @staticmethod
     def add_resources(player_resources: Resources, yields: Resources):
         if isinstance(yields, dict):
-            yields = Resources(**yields)  
+            yields = Resources(**yields)
         player_resources.food += yields.food
         player_resources.wood += yields.wood
         player_resources.iron += yields.iron

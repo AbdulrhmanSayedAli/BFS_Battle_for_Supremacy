@@ -7,16 +7,16 @@ class Resources:
 
     def deduct(self, other):
         if isinstance(other, dict):
-            other = Resources(**other) 
+            other = Resources(**other)
         self.food -= other.food
         self.wood -= other.wood
         self.iron -= other.iron
         self.coins -= other.coins
-        self.ensure_non_negative() 
+        self.ensure_non_negative()
 
     def add(self, other):
         if isinstance(other, dict):
-            other = Resources(**other)  
+            other = Resources(**other)
         self.food += other.food
         self.wood += other.wood
         self.iron += other.iron
@@ -26,10 +26,10 @@ class Resources:
         if isinstance(other, dict):
             other = Resources(**other)
         return (
-            self.food >= other.food and
-            self.wood >= other.wood and
-            self.iron >= other.iron and
-            self.coins >= other.coins
+            self.food >= other.food
+            and self.wood >= other.wood
+            and self.iron >= other.iron
+            and self.coins >= other.coins
         )
 
     def ensure_non_negative(self):
