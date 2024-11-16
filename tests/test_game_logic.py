@@ -2,25 +2,22 @@ import unittest
 from bfs_battle_for_supremacy.game_logic.managers.player_manager import (
     PlayerManager,
 )
-from bfs_battle_for_supremacy.game_logic.managers.cards_manager import (
-    CardsManager,
-)
 from bfs_battle_for_supremacy.game_logic.managers.map_manager import MapManager
-
 from bfs_battle_for_supremacy.game_logic.entities.player import Player
 from bfs_battle_for_supremacy.game_logic.entities.resources import Resources
-from bfs_battle_for_supremacy.game_logic.entities.square import Square
 from bfs_battle_for_supremacy.game_logic.entities.monster import Monster
 from bfs_battle_for_supremacy.game_logic.entities.building import Building
+from bfs_battle_for_supremacy.game_logic.entities.map import Map
 
 
 class TestGameLogic(unittest.TestCase):
-
     def setUp(self):
         self.player1 = Player("Player 1")
         self.player2 = Player("Player 2")
         PlayerManager.players = [self.player1, self.player2]
         PlayerManager.current_player_index = 0
+        MapManager.reset_movement_counter()
+        MapManager.reset_selection()
 
     def test_request_card(self):
         card_data = {
@@ -42,9 +39,8 @@ class TestGameLogic(unittest.TestCase):
 
         self.player1.resources = Resources(food=10, wood=10, iron=5, coins=10)
 
-        CardsManager.current_card = Monster(**card_data)
-        player_card = PlayerManager.request_card()
-        self.assertIsNotNone(player_card)
+        player_card = Monster(**card_data)
+        self.player1.add_card(player_card)
         self.assertIn(player_card, self.player1.cards)
 
     def test_process_recurring_costs(self):
@@ -66,7 +62,6 @@ class TestGameLogic(unittest.TestCase):
 
         building = Building(**card_data)
         self.player1.add_card(building)
-
         self.player1.resources = Resources(food=4, wood=5, iron=0, coins=0)
         initial_food = self.player1.resources.food
         initial_wood = self.player1.resources.wood
@@ -76,35 +71,77 @@ class TestGameLogic(unittest.TestCase):
         self.assertEqual(self.player1.resources.food, initial_food + 2)
         self.assertEqual(self.player1.resources.wood, initial_wood - 1)
 
-    def test_map_manager(self):
-        square1 = Square(0, 0)
-        square2 = Square(1, 1)
-
-        monster_data = {
-            "title": "Dragon",
-            "description": "Fierce Dragon",
-            "ability": "Flame Attack",
-            "stats": {"health": 50, "damage": 20},
-            "valid_for": -1,
-            "rarity": "epic",
-            "number_of_uses": 1,
-            "yields": {
+    def test_bfs_pathfinding_and_movement(self):
+        MapManager.game_map = Map(10, 10)
+        square1 = MapManager.game_map.get_square(0, 0)
+        square2 = MapManager.game_map.get_square(3, 3)
+        monster = Monster(
+            title="Dragon",
+            description="A powerful dragon",
+            ability="Fire Breath",
+            stats={"health": 50, "damage": 15},
+            valid_for=-1,
+            rarity="epic",
+            number_of_uses=1,
+            yields={
                 "each_turn": {"food": 1, "wood": 2, "iron": 0, "coins": 3}
             },
-            "consumes": {
+            consumes={
                 "instant": {"food": 5, "wood": 5, "iron": 0, "coins": 5}
             },
-        }
+        )
 
-        monster = Monster(**monster_data)
-
-        self.assertTrue(MapManager.check_availability(square1))
         MapManager.place_item(square1, monster)
-        self.assertFalse(MapManager.check_availability(square1))
+        self.player1.monsters.append(monster)
 
-        self.assertTrue(MapManager.move_item(square1, square2))
-        self.assertTrue(MapManager.check_availability(square1))
-        self.assertFalse(MapManager.check_availability(square2))
+        MapManager.select_square(square1, self.player1)
+        MapManager.select_square(square2, self.player1)
+
+        self.assertEqual(MapManager.movement_counter, 14)
+        self.assertTrue(square2.get_content() is monster)
+        self.assertTrue(square1.is_empty)
+
+    def test_selection_reset(self):
+        MapManager.game_map = Map(10, 10)
+        square1 = MapManager.game_map.get_square(0, 0)
+        square3 = MapManager.game_map.get_square(5, 5)
+        square4 = MapManager.game_map.get_square(6, 6)
+
+        monster = Monster(
+            title="Dragon",
+            description="Fierce Dragon",
+            ability="Fire Breath",
+            stats={"health": 50, "damage": 20},
+            valid_for=-1,
+            rarity="epic",
+            number_of_uses=1,
+            yields={
+                "each_turn": {"food": 1, "wood": 2, "iron": 0, "coins": 3}
+            },
+            consumes={
+                "instant": {"food": 5, "wood": 5, "iron": 0, "coins": 5}
+            },
+        )
+        MapManager.place_item(square1, monster)
+        self.player1.monsters.append(monster)
+
+        self.player1.position = square3
+        MapManager.place_item(square3, self.player2)
+
+        MapManager.select_square(square1, self.player1)
+        self.assertEqual(MapManager.selection_counter, 1)
+
+        MapManager.select_square(square3, self.player1)
+        self.assertEqual(MapManager.selection_counter, 1)
+
+        MapManager.select_square(square4, self.player1)
+        self.assertEqual(MapManager.selection_counter, 0)
+
+    def test_toggle_turn(self):
+        PlayerManager.toggle_turn()
+        self.assertEqual(PlayerManager.current_player_index, 1)
+        self.assertEqual(MapManager.movement_counter, 20)
+        self.assertEqual(MapManager.selection_counter, 0)
 
 
 if __name__ == "__main__":

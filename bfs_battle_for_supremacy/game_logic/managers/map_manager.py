@@ -25,22 +25,21 @@ class MapManager:
 
     @staticmethod
     def select_square(square: Square, current_player):
-
         if MapManager.selection_counter == 0:
-            if (
-                not square.is_empty
-                and square.get_content()
-                in [current_player] + current_player.monsters
-            ):
-                MapManager.current_position = square
-                MapManager.current_object = square.get_content()
-                MapManager.selection_counter = 1
-                print(
-                    "Selected current position: "
-                    + f"({square.row},{square.column})"
-                )
+            if not square.is_empty:
+                content = square.get_content()
+                if (
+                    content == current_player
+                    or content in current_player.monsters
+                ):
+                    MapManager.current_position = square
+                    MapManager.current_object = content
+                    MapManager.selection_counter = 1
+                else:
+                    print("Invalid selection. Please select a valid object.")
             else:
-                print("Invalid selection. Please select a valid object.")
+                print("Invalid selection. Square is empty.")
+
         elif MapManager.selection_counter == 1:
             if MapManager.check_availability(square):
                 MapManager.target_position = square
@@ -55,6 +54,7 @@ class MapManager:
                     "Target position is not empty."
                     + "Please select an empty square."
                 )
+
         else:
             print("Too many selections. Resetting selection.")
             MapManager.reset_selection()
@@ -97,7 +97,6 @@ class MapManager:
 
     @staticmethod
     def move_with_bfs(current_player):
-
         if not MapManager.current_position or not MapManager.target_position:
             print("Positions not set. Cannot move object.")
             return
@@ -112,6 +111,7 @@ class MapManager:
             return
 
         distance = len(path) - 1
+
         if distance > MapManager.movement_counter:
             print(
                 "Move exceeds remaining movement points "
@@ -129,7 +129,6 @@ class MapManager:
         MapManager.movement_counter -= distance
         print(f"Moved {item} along path: {path}")
         print(f"Remaining movement points: {MapManager.movement_counter}")
-
         MapManager.reset_selection()
 
     @staticmethod
