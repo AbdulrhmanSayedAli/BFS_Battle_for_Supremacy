@@ -1,4 +1,3 @@
-# monster.py
 from bfs_battle_for_supremacy.game_logic.entities.card import Card
 
 
@@ -16,7 +15,6 @@ class Monster(Card):
         consumes,
         **kwargs,
     ):
-        # إزالة `type` من `kwargs` إذا كان موجودًا
         kwargs.pop("type", None)
         super().__init__(
             title=title,
