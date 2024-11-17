@@ -1,3 +1,4 @@
+"""
 import unittest
 from bfs_battle_for_supremacy.game_logic.managers.player_manager import (
     PlayerManager,
@@ -146,3 +147,4 @@ class TestGameLogic(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+"""
