@@ -9,6 +9,7 @@ class CardsManager:
     loading = False
     finished = False
     current_card = None
+    negative_resources_count = {}
 
     @staticmethod
     def provide_card(player):
@@ -37,6 +38,7 @@ class CardsManager:
 
         if card.effects_on_me.get("instant"):
             CardsManager.apply_effects(player, card.effects_on_me["instant"])
+
         if card.effects_on_enemy.get("instant"):
             CardsManager.apply_effects(
                 enemy_player, card.effects_on_enemy["instant"]
@@ -47,29 +49,20 @@ class CardsManager:
                 player.resources, card.yields["instant"]
             )
 
-        if card.type == "monster":
-            player.monsters.append(card)
-        elif card.type == "building":
-            player.buildings.append(card)
-
         player.add_card(card)
         return True
 
     @staticmethod
     def process_recurring_effects(player, enemy_player):
-        expired_cards = []
+
+        if player not in CardsManager.negative_resources_count:
+            CardsManager.negative_resources_count[player] = 0
 
         for card in player.cards:
             if card.yields.get("each_turn"):
                 ResourcesManager.add_resources(
                     player.resources, card.yields["each_turn"]
                 )
-
-            if not ResourcesManager.can_afford_card(
-                player.resources, card.recurring_cost
-            ):
-                expired_cards.append(card)
-                continue
 
             ResourcesManager.deduct_resources(
                 player.resources, card.recurring_cost
@@ -86,17 +79,19 @@ class CardsManager:
 
             if card.valid_for > 0:
                 card.valid_for -= 1
-            card.number_of_uses -= 1
 
-            if card.valid_for == 0 or card.number_of_uses == 0:
-                expired_cards.append(card)
+        if player.resources.is_negative():
+            CardsManager.negative_resources_count[player] += 1
+            print(
+                f"Player {player.name} has negative resources. "
+                f"Count: {CardsManager.negative_resources_count[player]}"
+            )
+        else:
+            CardsManager.negative_resources_count[player] = 0
 
-        for card in expired_cards:
-            player.cards.remove(card)
-            if card.type == "monster":
-                player.monsters.remove(card)
-            elif card.type == "building":
-                player.buildings.remove(card)
+        if CardsManager.negative_resources_count[player] >= 10:
+            print(f"Player {player.name} has lost due to negative resources.")
+            player.has_lost = True
 
     @staticmethod
     def apply_effects(player, effects):
@@ -108,11 +103,17 @@ class CardsManager:
             damage_effect = effects["on_monsters"].get("damage", 0)
             num_monsters = effects["on_monsters"].get("number_of_monsters", -1)
 
+            cards_to_affect = [
+                card
+                for card in player.cards
+                if card.type in {"monster", "building"}
+            ]
+
             monsters_to_affect = (
-                player.monsters
+                cards_to_affect
                 if num_monsters == -1
-                else player.monsters[:num_monsters]
+                else cards_to_affect[:num_monsters]
             )
             for monster in monsters_to_affect:
-                monster.health += health_effect
-                monster.damage += damage_effect
+                monster.stats["health"] += health_effect
+                monster.stats["damage"] += damage_effect

@@ -1,6 +1,8 @@
 from bfs_battle_for_supremacy.game_logic.entities.map import Map
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
+from bfs_battle_for_supremacy.game_logic.entities.card import Card
 from collections import deque
+import asyncio
 
 
 class MapManager:
@@ -28,36 +30,48 @@ class MapManager:
         if MapManager.selection_counter == 0:
             if not square.is_empty:
                 content = square.get_content()
-                if (
-                    content == current_player
-                    or content in current_player.monsters
+                if content == current_player or (
+                    isinstance(content, Card)
+                    and content.type in ["monster", "building"]
+                    and content in current_player.cards
                 ):
                     MapManager.current_position = square
                     MapManager.current_object = content
                     MapManager.selection_counter = 1
+                    print(f"Selected object: {content}.")
                 else:
                     print("Invalid selection. Please select a valid object.")
             else:
                 print("Invalid selection. Square is empty.")
 
         elif MapManager.selection_counter == 1:
-            if MapManager.check_availability(square):
-                MapManager.target_position = square
-                MapManager.selection_counter = 2
-                print(
-                    "Selected target position:"
-                    + f"({square.row}, {square.column})"
-                )
-                MapManager.move_with_bfs(current_player)
+            if MapManager.current_object == current_player or (
+                isinstance(MapManager.current_object, Card)
+                and MapManager.current_object.type == "monster"
+                and MapManager.current_object in current_player.monsters
+            ):
+
+                if MapManager.check_availability(square):
+                    MapManager.target_position = square
+                    MapManager.selection_counter = 2
+                    print(
+                        "Selected target position: "
+                        + f"({square.row}, {square.column})."
+                    )
+                    MapManager.move_with_bfs(current_player)
+                else:
+                    print(
+                        "Target position is not empty."
+                        + "Please select an empty square."
+                    )
             else:
                 print(
-                    "Target position is not empty."
-                    + "Please select an empty square."
+                    "Invalid initial selection for movement. Please reselect."
                 )
+                MapManager.reset_selection()
 
         else:
-            print("Too many selections. Resetting selection.")
-            MapManager.reset_selection()
+            print("Ignoring extra selection during movement.")
 
     @staticmethod
     def bfs_path_finding(start_square, target_square):
@@ -96,7 +110,8 @@ class MapManager:
         return []
 
     @staticmethod
-    def move_with_bfs(current_player):
+    async def move_with_bfs(current_player, delay=0.5):
+
         if not MapManager.current_position or not MapManager.target_position:
             print("Positions not set. Cannot move object.")
             return
@@ -125,9 +140,10 @@ class MapManager:
             MapManager.remove_item(MapManager.current_position)
             MapManager.place_item(step, item)
             MapManager.current_position = step
+            print(f"Moved {item} to ({step.row}, {step.column})")
+            await asyncio.sleep(delay)
 
         MapManager.movement_counter -= distance
-        print(f"Moved {item} along path: {path}")
         print(f"Remaining movement points: {MapManager.movement_counter}")
         MapManager.reset_selection()
 

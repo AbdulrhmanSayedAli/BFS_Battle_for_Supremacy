@@ -37,3 +37,8 @@ class Resources:
         self.wood = max(self.wood, 0)
         self.iron = max(self.iron, 0)
         self.coins = max(self.coins, 0)
+
+    def is_negative(self):
+        return (
+            self.food < 0 or self.wood < 0 or self.iron < 0 or self.coins < 0
+        )

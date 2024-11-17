@@ -20,7 +20,6 @@ class PlayerManager:
 
     @staticmethod
     def request_card():
-
         current_player = PlayerManager.players[
             PlayerManager.current_player_index
         ]
