@@ -20,6 +20,15 @@ class PlayerManager:
 
     @staticmethod
     def request_card():
+
+        current_player = PlayerManager.players[
+            PlayerManager.current_player_index
+        ]
+        card = CardsManager.provide_card(current_player)
+        return card
+
+    @staticmethod
+    def activate_card(card):
         current_player = PlayerManager.players[
             PlayerManager.current_player_index
         ]
@@ -27,12 +36,11 @@ class PlayerManager:
             1 - PlayerManager.current_player_index
         ]
 
-        card = CardsManager.provide_card(current_player)
         if card and CardsManager.activate_card(
             card, current_player, enemy_player
         ):
-            return card
-        return None
+            return True
+        return False
 
     @staticmethod
     def process_recurring_costs():
