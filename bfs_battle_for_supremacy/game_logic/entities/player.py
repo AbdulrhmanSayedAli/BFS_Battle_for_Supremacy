@@ -1,8 +1,6 @@
 from bfs_battle_for_supremacy.game_logic.entities.resources import Resources
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 from bfs_battle_for_supremacy.game_logic.entities.card import Card
-from bfs_battle_for_supremacy.game_logic.entities.monster import Monster
-from bfs_battle_for_supremacy.game_logic.entities.building import Building
 
 
 class Player:
@@ -14,10 +12,12 @@ class Player:
         self.monsters = []
         self.buildings = []
         self.position = position
+        self.has_lost = False
 
     def add_card(self, card: Card):
         self.cards.append(card)
-        if isinstance(card, Monster):
+
+        if card.type == "Monster":
             self.monsters.append(card)
-        elif isinstance(card, Building):
+        elif card.type == "Building":
             self.buildings.append(card)

@@ -8,4 +8,6 @@ class Map:
         ]
 
     def get_square(self, row, col):
-        return self.grid[row][col]
+        if 0 <= row < len(self.grid) and 0 <= col < len(self.grid[0]):
+            return self.grid[row][col]
+        return None

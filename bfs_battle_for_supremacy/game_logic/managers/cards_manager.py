@@ -1,22 +1,19 @@
 from bfs_battle_for_supremacy.game_logic.entities.card import Card
-from bfs_battle_for_supremacy.game_logic.entities.monster import Monster
-from bfs_battle_for_supremacy.game_logic.entities.building import Building
 from bfs_battle_for_supremacy.game_logic.utilities.ai_handler import AiHandler
 from bfs_battle_for_supremacy.game_logic.managers.resources_manager import (
     ResourcesManager,
 )
-from bfs_battle_for_supremacy.game_logic.entities.resources import Resources
 
 
 class CardsManager:
     loading = False
     finished = False
     current_card = None
+    negative_resources_count = {}
 
     @staticmethod
     def provide_card(player):
         CardsManager.loading = True
-
         card_data = AiHandler.send_card_request()
 
         card_type = card_data.get("type")
@@ -24,12 +21,7 @@ class CardsManager:
             CardsManager.loading = False
             return None
 
-        if card_type == "monster":
-            card = Monster(**card_data)
-        elif card_type == "building":
-            card = Building(**card_data)
-        else:
-            card = Card(**card_data)
+        card = Card(**card_data)
 
         CardsManager.current_card = card
         CardsManager.loading = False
@@ -39,90 +31,67 @@ class CardsManager:
 
     @staticmethod
     def activate_card(card, player, enemy_player):
-        if not ResourcesManager.can_afford_card(
-            player.resources, card.consumes.get("instant")
-        ):
+        if not ResourcesManager.can_afford_card(player.resources, card.cost):
             return False
 
-        ResourcesManager.deduct_resources(
-            player.resources, card.consumes["instant"]
-        )
+        ResourcesManager.deduct_resources(player.resources, card.cost)
 
-        if (
-            isinstance(card, Monster)
-            or isinstance(card, Card)
-            and card.type == "effect"
-        ):
-            if card.effects_on_me.get("instant"):
-                CardsManager.apply_effects(
-                    player, card.effects_on_me["instant"]
-                )
-            if card.effects_on_enemy.get("instant"):
-                CardsManager.apply_effects(
-                    enemy_player, card.effects_on_enemy["instant"]
-                )
+        if card.effects_on_me.get("instant"):
+            CardsManager.apply_effects(player, card.effects_on_me["instant"])
 
-        elif isinstance(card, Building):
-            if card.yields.get("instant"):
-                ResourcesManager.add_resources(
-                    player.resources, card.yields["instant"]
-                )
+        if card.effects_on_enemy.get("instant"):
+            CardsManager.apply_effects(
+                enemy_player, card.effects_on_enemy["instant"]
+            )
+
+        if card.yields.get("instant"):
+            ResourcesManager.add_resources(
+                player.resources, card.yields["instant"]
+            )
 
         player.add_card(card)
         return True
 
     @staticmethod
     def process_recurring_effects(player, enemy_player):
-        expired_cards = []
+
+        if player not in CardsManager.negative_resources_count:
+            CardsManager.negative_resources_count[player] = 0
 
         for card in player.cards:
-            if isinstance(card, Monster) or (
-                isinstance(card, Card) and card.type == "effect"
-            ):
-                if card.effects_on_me.get("each_turn"):
+            if card.yields.get("each_turn"):
+                ResourcesManager.add_resources(
+                    player.resources, card.yields["each_turn"]
+                )
 
-                    CardsManager.apply_effects(
-                        player, card.effects_on_me["each_turn"]
-                    )
+            ResourcesManager.deduct_resources(
+                player.resources, card.recurring_cost
+            )
 
-                if card.effects_on_enemy.get("each_turn"):
-
-                    CardsManager.apply_effects(
-                        enemy_player, card.effects_on_enemy["each_turn"]
-                    )
-
-            elif isinstance(card, Building):
-                if card.yields.get("each_turn"):
-
-                    ResourcesManager.add_resources(
-                        player.resources, Resources(**card.yields["each_turn"])
-                    )
-
-                if not ResourcesManager.can_afford_card(
-                    player.resources, card.consumes["each_turn"]
-                ):
-
-                    expired_cards.append(card)
-                    continue
-
-                ResourcesManager.deduct_resources(
-                    player.resources, card.consumes["each_turn"]
+            if card.effects_on_me.get("each_turn"):
+                CardsManager.apply_effects(
+                    player, card.effects_on_me["each_turn"]
+                )
+            if card.effects_on_enemy.get("each_turn"):
+                CardsManager.apply_effects(
+                    enemy_player, card.effects_on_enemy["each_turn"]
                 )
 
             if card.valid_for > 0:
                 card.valid_for -= 1
 
-            card.number_of_uses -= 1
+        if player.resources.is_negative():
+            CardsManager.negative_resources_count[player] += 1
+            print(
+                f"Player {player.name} has negative resources. "
+                f"Count: {CardsManager.negative_resources_count[player]}"
+            )
+        else:
+            CardsManager.negative_resources_count[player] = 0
 
-            if card.valid_for == 0 or card.number_of_uses == 0:
-                expired_cards.append(card)
-
-        for card in expired_cards:
-            player.cards.remove(card)
-            if isinstance(card, Monster):
-                player.monsters.remove(card)
-            elif isinstance(card, Building):
-                player.buildings.remove(card)
+        if CardsManager.negative_resources_count[player] >= 10:
+            print(f"Player {player.name} has lost due to negative resources.")
+            player.has_lost = True
 
     @staticmethod
     def apply_effects(player, effects):
@@ -134,11 +103,17 @@ class CardsManager:
             damage_effect = effects["on_monsters"].get("damage", 0)
             num_monsters = effects["on_monsters"].get("number_of_monsters", -1)
 
+            cards_to_affect = [
+                card
+                for card in player.cards
+                if card.type in {"monster", "building"}
+            ]
+
             monsters_to_affect = (
-                player.monsters
+                cards_to_affect
                 if num_monsters == -1
-                else player.monsters[:num_monsters]
+                else cards_to_affect[:num_monsters]
             )
             for monster in monsters_to_affect:
-                monster.health += health_effect
-                monster.damage += damage_effect
+                monster.stats["health"] += health_effect
+                monster.stats["damage"] += damage_effect
