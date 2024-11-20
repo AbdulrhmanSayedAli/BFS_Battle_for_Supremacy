@@ -18,6 +18,7 @@ class Card:
         stats=None,
         effects_on_me=None,
         effects_on_enemy=None,
+        image_url=None,
     ):
         self.title = title
         self.description = description
@@ -34,3 +35,4 @@ class Card:
         self.stats = stats or {}
         self.effects_on_me = effects_on_me or {}
         self.effects_on_enemy = effects_on_enemy or {}
+        self.image_url = image_url
