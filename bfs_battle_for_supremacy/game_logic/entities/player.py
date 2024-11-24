@@ -4,9 +4,10 @@ from bfs_battle_for_supremacy.game_logic.entities.card import Card
 
 
 class Player:
-    def __init__(self, name, health=100, position: Square = None):
+    def __init__(self, name, health=100, damage=5, position: Square = None):
         self.name = name
         self.health = health
+        self.damage = damage
         self.cards = []
         self.resources = Resources()
         self.monsters = []

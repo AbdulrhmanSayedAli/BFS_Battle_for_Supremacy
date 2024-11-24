@@ -12,7 +12,7 @@ class CardsManager:
     negative_resources_count = {}
 
     @staticmethod
-    def provide_card(player):
+    def provide_card():
         CardsManager.loading = True
         card_data = AiHandler.send_card_request()
 
@@ -114,6 +114,10 @@ class CardsManager:
                 if num_monsters == -1
                 else cards_to_affect[:num_monsters]
             )
-            for monster in monsters_to_affect:
-                monster.stats["health"] += health_effect
-                monster.stats["damage"] += damage_effect
+            for card in monsters_to_affect:
+                card.health += health_effect
+                card.damage += damage_effect
+                print(
+                    f"{card.title} health updated to {card.health}, "
+                    f"damage updated to {card.damage}."
+                )
