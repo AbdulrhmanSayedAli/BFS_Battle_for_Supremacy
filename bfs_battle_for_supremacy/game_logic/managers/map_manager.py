@@ -47,6 +47,14 @@ class MapManager:
         elif MapManager.selection_counter == 1:
             content = square.get_content()
 
+            if content == current_player or (
+                isinstance(content, Card) and content in current_player.cards
+            ):
+                MapManager.current_position = square
+                MapManager.current_object = content
+                print(f"Re-selected object: {content}.")
+                return
+
             if (
                 isinstance(content, Card)
                 and content not in current_player.cards
@@ -65,7 +73,8 @@ class MapManager:
                             break
                     else:
                         print(
-                            "No valid path to any nearby square.Attack failed."
+                            "No valid path to any nearby square." +
+                            "Attack failed."
                         )
                 else:
                     print(
