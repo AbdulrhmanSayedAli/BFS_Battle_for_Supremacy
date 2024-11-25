@@ -73,8 +73,8 @@ class MapManager:
                             break
                     else:
                         print(
-                            "No valid path to any nearby square." +
-                            "Attack failed."
+                            "No valid path to any nearby square."
+                            + "Attack failed."
                         )
                 else:
                     print(
