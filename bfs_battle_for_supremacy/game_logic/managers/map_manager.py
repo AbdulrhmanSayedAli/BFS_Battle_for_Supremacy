@@ -26,7 +26,7 @@ class MapManager:
         MapManager.selection_counter = 0
 
     @staticmethod
-    def select_square(square: Square, current_player):
+    async def select_square(square: Square, current_player):
         if MapManager.selection_counter == 0:
             if not square.is_empty:
                 content = square.get_content()
@@ -45,39 +45,130 @@ class MapManager:
                 print("Invalid selection. Square is empty.")
 
         elif MapManager.selection_counter == 1:
-            if MapManager.current_object == current_player or (
-                isinstance(MapManager.current_object, Card)
-                and MapManager.current_object.type == "monster"
-                and MapManager.current_object in current_player.monsters
-            ):
+            content = square.get_content()
 
-                if MapManager.check_availability(square):
-                    MapManager.target_position = square
-                    MapManager.selection_counter = 2
-                    print(
-                        "Selected target position: "
-                        + f"({square.row}, {square.column})."
-                    )
-                    MapManager.move_with_bfs(current_player)
+            if content == current_player or (
+                isinstance(content, Card) and content in current_player.cards
+            ):
+                MapManager.current_position = square
+                MapManager.current_object = content
+                print(f"Re-selected object: {content}.")
+                return
+
+            if (
+                isinstance(content, Card)
+                and content not in current_player.cards
+            ) or content != current_player:
+                print(f"Attacking {content}.")
+                nearest_squares = (
+                    MapManager.find_nearest_empty_squares_limited(square)
+                )
+                if nearest_squares:
+                    for nearest_square in nearest_squares:
+                        MapManager.target_position = nearest_square
+                        success = await MapManager.move_with_bfs(
+                            current_player, attack_target=content
+                        )
+                        if success:
+                            break
+                    else:
+                        print(
+                            "No valid path to any nearby square."
+                            + "Attack failed."
+                        )
                 else:
                     print(
-                        "Target position is not empty."
-                        + "Please select an empty square."
+                        "No empty squares near the target. "
+                        + "Attack not possible."
                     )
+
+            elif MapManager.check_availability(square):
+                MapManager.target_position = square
+                MapManager.selection_counter = 2
+                print(
+                    "Selected target position: "
+                    + f"({square.row}, {square.column})."
+                )
+                await MapManager.move_with_bfs(current_player)
             else:
                 print(
-                    "Invalid initial selection for movement. Please reselect."
+                    "Target position is not empty."
+                    + "Please select an empty square."
                 )
-                MapManager.reset_selection()
 
         else:
             print("Ignoring extra selection during movement.")
 
     @staticmethod
-    def bfs_path_finding(start_square, target_square):
-        rows = len(MapManager.game_map.grid)
-        cols = len(MapManager.game_map.grid[0])
+    def find_nearest_empty_squares_limited(target_square: Square):
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        empty_squares = []
 
+        for direction in directions:
+            new_row = target_square.row + direction[0]
+            new_col = target_square.column + direction[1]
+            if MapManager.is_within_bounds(new_row, new_col):
+                adjacent_square = MapManager.game_map.get_square(
+                    new_row, new_col
+                )
+                if adjacent_square.is_empty:
+                    empty_squares.append(adjacent_square)
+
+        return empty_squares
+
+    @staticmethod
+    async def move_with_bfs(delay=0.5, attack_target=None):
+        if not MapManager.current_position or not MapManager.target_position:
+            print("Positions not set. Cannot move object.")
+            return False
+
+        path = MapManager.bfs_path_finding(
+            MapManager.current_position, MapManager.target_position
+        )
+
+        if not path:
+            print(
+                "No valid path to target position"
+                + f" ({MapManager.target_position.row},"
+                + f" {MapManager.target_position.column})."
+            )
+            return False
+
+        distance = len(path) - 1
+
+        if distance > MapManager.movement_counter:
+            print(
+                "Move exceeds remaining movement points "
+                + f"({MapManager.movement_counter})."
+            )
+            return False
+
+        item = MapManager.current_object
+        for step in path[1:]:
+            MapManager.remove_item(MapManager.current_position)
+            MapManager.place_item(step, item)
+            MapManager.current_position = step
+            print(f"Moved {item} to ({step.row}, {step.column})")
+            await asyncio.sleep(delay)
+
+        if attack_target:
+            print(f"Attacking {attack_target.title} with {item}.")
+            attack_target.health -= item.damage
+            print(
+                f"{attack_target.title} took {item.damage} damage. "
+                + f"Remaining health: {attack_target.health}"
+            )
+            if attack_target.health <= 0:
+                print(f"{attack_target.title} has been destroyed.")
+                MapManager.remove_item(MapManager.target_position)
+
+        MapManager.movement_counter -= distance
+        print(f"Remaining movement points: {MapManager.movement_counter}")
+        MapManager.reset_selection()
+        return True
+
+    @staticmethod
+    def bfs_path_finding(start_square, target_square):
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         visited = set()
         queue = deque([(start_square, [])])
@@ -94,12 +185,12 @@ class MapManager:
             visited.add(current_square)
 
             for direction in directions:
-                next_row = current_square.row + direction[0]
-                next_col = current_square.column + direction[1]
+                new_row = current_square.row + direction[0]
+                new_col = current_square.column + direction[1]
 
-                if 0 <= next_row < rows and 0 <= next_col < cols:
+                if MapManager.is_within_bounds(new_row, new_col):
                     next_square = MapManager.game_map.get_square(
-                        next_row, next_col
+                        new_row, new_col
                     )
                     if (
                         MapManager.check_availability(next_square)
@@ -110,42 +201,10 @@ class MapManager:
         return []
 
     @staticmethod
-    async def move_with_bfs(current_player, delay=0.5):
-
-        if not MapManager.current_position or not MapManager.target_position:
-            print("Positions not set. Cannot move object.")
-            return
-
-        path = MapManager.bfs_path_finding(
-            MapManager.current_position, MapManager.target_position
+    def is_within_bounds(row, col):
+        return 0 <= row < len(MapManager.game_map.grid) and 0 <= col < len(
+            MapManager.game_map.grid[0]
         )
-
-        if not path:
-            print("No valid path found.")
-            MapManager.reset_selection()
-            return
-
-        distance = len(path) - 1
-
-        if distance > MapManager.movement_counter:
-            print(
-                "Move exceeds remaining movement points "
-                + f"({MapManager.movement_counter})."
-            )
-            MapManager.reset_selection()
-            return
-
-        item = MapManager.current_object
-        for step in path[1:]:
-            MapManager.remove_item(MapManager.current_position)
-            MapManager.place_item(step, item)
-            MapManager.current_position = step
-            print(f"Moved {item} to ({step.row}, {step.column})")
-            await asyncio.sleep(delay)
-
-        MapManager.movement_counter -= distance
-        print(f"Remaining movement points: {MapManager.movement_counter}")
-        MapManager.reset_selection()
 
     @staticmethod
     def check_availability(square: Square):
