@@ -17,6 +17,7 @@ class PlayerManager:
         )
         MapManager.reset_movement_counter()
         MapManager.reset_selection()
+        MapManager.reset_attack_counter()
 
     @staticmethod
     def request_card():
@@ -49,11 +50,15 @@ class PlayerManager:
         enemy_player = PlayerManager.players[
             1 - PlayerManager.current_player_index
         ]
-        CardsManager.process_recurring_effects(current_player, enemy_player)
+        results = CardsManager.process_recurring_effects(
+            current_player, enemy_player
+        )
+        return results
 
     @staticmethod
-    def select_square_for_current_player(square: Square):
+    async def select_square_for_current_player(square: Square):
         current_player = PlayerManager.players[
             PlayerManager.current_player_index
         ]
-        MapManager.select_square(square, current_player)
+        result = await MapManager.select_square(square, current_player)
+        return result
