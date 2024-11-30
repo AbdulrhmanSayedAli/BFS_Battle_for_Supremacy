@@ -6,6 +6,7 @@ from bfs_battle_for_supremacy.ui.utils import main_color, main_color_hover
 from bfs_battle_for_supremacy.ui.root.container import Container
 from bfs_battle_for_supremacy.ui.root.text import Text
 from bfs_battle_for_supremacy.game_logic.managers.player_manager import PlayerManager
+from bfs_battle_for_supremacy.game_logic.managers.map_manager import MapManager
 BOARD_WIDTH = 700
 BOARD_HEIGHT = 700
 SELECTION_WIDTH = 500
