@@ -1,6 +1,9 @@
 from bfs_battle_for_supremacy.game_logic.entities.map import Map
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 from bfs_battle_for_supremacy.game_logic.entities.card import Card
+from bfs_battle_for_supremacy.game_logic.entities.player import Player
+from bfs_battle_for_supremacy.game_logic.entities.rock import Rock
+import random
 from collections import deque
 import asyncio
 
@@ -15,6 +18,34 @@ class MapManager:
     selection_counter = 0
     limit_attack_counter = 2
     attack_counter = {}
+
+    @staticmethod
+    def initialize_map(player1: Player, player2: Player):
+
+        player1_square = MapManager.game_map.get_square(0, 0)
+        if player1_square:
+            MapManager.place_item(player1_square, player1)
+            player1.position = player1_square
+
+        rows = len(MapManager.game_map.grid)
+        cols = len(MapManager.game_map.grid[0])
+        player2_square = MapManager.game_map.get_square(rows - 1, cols - 1)
+        if player2_square:
+            MapManager.place_item(player2_square, player2)
+            player2.position = player2_square
+
+        rock_image_path = ""
+        for _ in range(20):
+            while True:
+                random_row = random.randint(0, rows - 1)
+                random_col = random.randint(0, cols - 1)
+                random_square = MapManager.game_map.get_square(
+                    random_row, random_col
+                )
+                if random_square and random_square.is_empty:
+                    rock = Rock(image_path=rock_image_path)
+                    MapManager.place_item(random_square, rock)
+                    break
 
     @staticmethod
     def reset_movement_counter():
@@ -164,6 +195,10 @@ class MapManager:
         for step in path[1:]:
             MapManager.remove_item(MapManager.current_position)
             MapManager.place_item(step, item)
+            if isinstance(item, Card):
+                item.location = step
+            elif isinstance(item, Player):
+                item.position = step
             MapManager.current_position = step
             print(f"Moved {item} to ({step.row}, {step.column})")
             await asyncio.sleep(delay)
