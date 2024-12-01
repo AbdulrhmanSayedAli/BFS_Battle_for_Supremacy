@@ -28,7 +28,7 @@ class PlayerManager:
         return card
 
     @staticmethod
-    def activate_card(card):
+    def activate_card(card, target_square: Square):
         current_player = PlayerManager.players[
             PlayerManager.current_player_index
         ]
@@ -37,7 +37,7 @@ class PlayerManager:
         ]
 
         if card and CardsManager.activate_card(
-            card, current_player, enemy_player
+            card, current_player, enemy_player, target_square
         ):
             return True
         return False

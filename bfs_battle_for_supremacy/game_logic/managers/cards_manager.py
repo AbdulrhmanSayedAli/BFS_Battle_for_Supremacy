@@ -1,7 +1,11 @@
 from bfs_battle_for_supremacy.game_logic.entities.card import Card
+from bfs_battle_for_supremacy.game_logic.entities.square import Square
 from bfs_battle_for_supremacy.game_logic.utilities.ai_handler import AiHandler
 from bfs_battle_for_supremacy.game_logic.managers.resources_manager import (
     ResourcesManager,
+)
+from bfs_battle_for_supremacy.game_logic.managers.map_manager import (
+    MapManager,
 )
 
 
@@ -30,7 +34,7 @@ class CardsManager:
         return card
 
     @staticmethod
-    def activate_card(card, player, enemy_player):
+    def activate_card(card, player, enemy_player, target_square: Square):
         if not ResourcesManager.can_afford_card(player.resources, card.cost):
             return False
 
@@ -49,8 +53,11 @@ class CardsManager:
                 player.resources, card.yields["instant"]
             )
 
-        player.add_card(card)
-        return True
+        if MapManager.place_item(target_square, card):
+            card.location = target_square
+            player.add_card(card)
+            return True
+        return False
 
     @staticmethod
     def process_recurring_effects(player, enemy_player):
