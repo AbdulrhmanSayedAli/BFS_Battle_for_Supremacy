@@ -7,8 +7,10 @@ from bfs_battle_for_supremacy.config import (
     IMAGES_PATH,
 )
 import os
-
-
+from bfs_battle_for_supremacy.game_logic.managers.map_manager import MapManager
+from bfs_battle_for_supremacy.game_logic.entities.square import Square
+import asyncio
+from bfs_battle_for_supremacy.game_logic.managers.player_manager import PlayerManager
 class Board(Container):
     def __init__(
         self,
@@ -50,7 +52,7 @@ class Board(Container):
                         tile_height,
                         j,
                         i,
-                        on_click=lambda c, e: self.select_tile(c.pos),
+                        on_click=lambda c, e: self.select_tile(c),
                     )
                 )
             res.append(cur_res)
@@ -60,12 +62,10 @@ class Board(Container):
         )
         return res
 
-    def select_tile(self, pos):
-        tile: Tile = self.components[pos]
-        if tile.selected:
-            self.tiles[tile.pos_y][tile.pos_x].selected = False
-            return
-        for i in range(len(self.tiles)):
-            for j in range(len(self.tiles[i])):
-                self.tiles[i][j].selected = False
-        self.tiles[tile.pos_y][tile.pos_x].selected = True
+    def select_tile(self, tile):
+        tile: Tile = tile
+        asyncio.run(MapManager.select_square(square=Square(column=tile.y,
+                                               row=tile.x,
+                                               ),
+                                               current_player=PlayerManager.players[PlayerManager.current_player_index]))
+        

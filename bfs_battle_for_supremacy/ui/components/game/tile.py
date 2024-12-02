@@ -5,7 +5,7 @@ from bfs_battle_for_supremacy.ui.utils import (
     tile_main_color,
     tile_secondary_color,
 )
-from bfs_battle_for_supremacy.config import BOARD_SIZE_HEIGHT
+from bfs_battle_for_supremacy.config import BOARD_SIZE_WIDTH
 
 
 class Tile(Component):
@@ -57,7 +57,7 @@ class Tile(Component):
 
     @property
     def pos(self):
-        return BOARD_SIZE_HEIGHT * self.pos_y + self.pos_x
+        return BOARD_SIZE_WIDTH * self.pos_y + self.pos_x
 
     @property
     def board_color(self):
