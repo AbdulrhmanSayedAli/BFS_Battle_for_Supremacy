@@ -1,3 +1,5 @@
+import os
+from config import *
 from bfs_battle_for_supremacy.game_logic.entities.map import Map
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 from bfs_battle_for_supremacy.game_logic.entities.card import Card
@@ -34,8 +36,8 @@ class MapManager:
             MapManager.place_item(player2_square, player2)
             player2.position = player2_square
 
-        rock_image_path = ""
-        for _ in range(20):
+        rock_image_path = os.path.join(IMAGES_PATH, "rock.png")
+        for _ in range(ROCK_NUM):
             while True:
                 random_row = random.randint(0, rows - 1)
                 random_col = random.randint(0, cols - 1)

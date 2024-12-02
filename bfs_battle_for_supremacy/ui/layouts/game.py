@@ -1,12 +1,15 @@
+import os
 from bfs_battle_for_supremacy.ui.root import Layout, Button
 from bfs_battle_for_supremacy.ui.components.game.board import Board
 from bfs_battle_for_supremacy.ui.utils import get_font
-from bfs_battle_for_supremacy.config import WIDTH
+from bfs_battle_for_supremacy.config import IMAGES_PATH, WIDTH
 from bfs_battle_for_supremacy.ui.utils import main_color, main_color_hover
 from bfs_battle_for_supremacy.ui.root.container import Container
 from bfs_battle_for_supremacy.ui.root.text import Text
 from bfs_battle_for_supremacy.game_logic.managers.player_manager import PlayerManager
 from bfs_battle_for_supremacy.game_logic.managers.map_manager import MapManager
+from bfs_battle_for_supremacy.game_logic.entities.player import Player
+from bfs_battle_for_supremacy.ui.components.game.tile import Tile
 BOARD_WIDTH = 700
 BOARD_HEIGHT = 700
 SELECTION_WIDTH = 500
@@ -17,6 +20,7 @@ STATS_HEIGHT = 200
 
 class Game(Layout):
     def setup_components(self):
+        MapManager.initialize_map(player1=PlayerManager.players[0],player2=PlayerManager.players[1])
         self.board: Board = Board(0, 0, BOARD_WIDTH, BOARD_HEIGHT)
         self.selection = Button(
             BOARD_WIDTH,
@@ -239,3 +243,13 @@ class Game(Layout):
         self.add_component(self.selection)
         self.add_component(self.draw_card_button)
         self.add_component(self.end_turn_button)
+    def update_components(self):
+        comp = self.board.components
+        for i in range(10):
+            for j in range(10):
+                data= MapManager.game_map.get_square(i,j)
+                if data.is_empty:
+                    print("hi2")
+                elif isinstance(data.content,Player):
+                    print("hi")
+        self.board.components=comp
