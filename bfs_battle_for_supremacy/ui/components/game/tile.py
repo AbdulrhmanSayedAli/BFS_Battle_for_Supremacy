@@ -52,8 +52,11 @@ class Tile(Component):
 
     @image_path.setter
     def image_path(self, value):
-        self._image_path = value
-        self.image = Image(0, 0, self.rect.width, self.rect.height, value)
+        if(value):
+            self._image_path = value
+            self.image = Image(0, 0, self.rect.width, self.rect.height, value)
+        else:
+            self.image = None
 
     @property
     def pos(self):

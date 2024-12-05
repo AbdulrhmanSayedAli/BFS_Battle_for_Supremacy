@@ -1,4 +1,5 @@
 import os
+from bfs_battle_for_supremacy.game_logic.entities.rock import Rock
 from bfs_battle_for_supremacy.ui.root import Layout, Button
 from bfs_battle_for_supremacy.ui.components.game.board import Board
 from bfs_battle_for_supremacy.ui.utils import get_font
@@ -243,13 +244,21 @@ class Game(Layout):
         self.add_component(self.selection)
         self.add_component(self.draw_card_button)
         self.add_component(self.end_turn_button)
+    #"""
     def update_components(self):
-        comp = self.board.components
         for i in range(10):
             for j in range(10):
-                data= MapManager.game_map.get_square(i,j)
+                data = MapManager.game_map.get_square(i,j)
                 if data.is_empty:
-                    print("hi2")
+                    self.board.components[i+j].image_path = None
                 elif isinstance(data.content,Player):
-                    print("hi")
-        self.board.components=comp
+                    if data.content.name=="Player 1":
+                        self.board.components[i+j].image_path=os.path.join(IMAGES_PATH, "player1.webp")
+                    else:
+                        self.board.components[i+j].image_path=os.path.join(IMAGES_PATH, "player2.webp")
+                elif isinstance(data.content,Rock):
+                    os.path.join(IMAGES_PATH, "rock.png")
+                else:
+                    self.board.components[i+j].image_path = None
+    #"""
+
