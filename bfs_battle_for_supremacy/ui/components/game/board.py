@@ -10,6 +10,7 @@ import os
 from bfs_battle_for_supremacy.game_logic.managers.map_manager import MapManager
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 import asyncio
+import threading
 from bfs_battle_for_supremacy.game_logic.managers.player_manager import PlayerManager
 from bfs_battle_for_supremacy.game_logic.entities.player import Player
 from bfs_battle_for_supremacy.game_logic.entities.card import Card
@@ -39,6 +40,7 @@ class Board(Container):
     def tiles(self, tiles):
         self._tiles = tiles
         self.components = [tile for row in tiles for tile in row]
+        print(self.components)
 
     def setup_tiles(self, width, height) -> list[list[Tile]]:
         tile_height = height / BOARD_SIZE_HEIGHT
@@ -57,6 +59,7 @@ class Board(Container):
                             tile_height,
                             j,
                             i,
+                            square,
                             on_click=lambda c, e: self.select_tile(c),
                         )
                     )
@@ -70,6 +73,7 @@ class Board(Container):
                             tile_height,
                             j,
                             i,
+                            square,
                             on_click=lambda c, e: self.select_tile(c),
                             image_path= os.path.join(IMAGES_PATH, "player1.webp")
                         )
@@ -84,6 +88,7 @@ class Board(Container):
                             tile_height,
                             j,
                             i,
+                            square,
                             on_click=lambda c, e: self.select_tile(c),
                             image_path= os.path.join(IMAGES_PATH, "player2.webp")
                         )
@@ -99,6 +104,7 @@ class Board(Container):
                             tile_height,
                             j,
                             i,
+                            square,
                             on_click=lambda c, e: self.select_tile(c),
                             image_path= os.path.join(IMAGES_PATH, "rock.png")
                         )
@@ -114,9 +120,14 @@ class Board(Container):
 
     def select_tile(self, tile):
         tile: Tile = tile
-        asyncio.run(MapManager.select_square(square=Square(column=tile.y,
-                                               row=tile.x,
-                                               ),
-                                               current_player=PlayerManager.players[PlayerManager.current_player_index]))
+        print("tests")
+        print(tile.pos_x,tile.pos_y)
+        print(tile.square.row,tile.square.column)
+        threading.Thread(target=PlayerManager.select_square_for_current_player, args=(tile.square,)).start()
+        # asyncio.create_task(PlayerManager.select_square_for_current_player(square=tile.square))
+        #asyncio.run(MapManager.select_square(square=Square(column=tile.y,
+        #                                      row=tile.x,
+        #                                       ),
+        #                                       current_player=PlayerManager.players[PlayerManager.current_player_index]))
 
         
