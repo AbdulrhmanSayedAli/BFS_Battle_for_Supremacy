@@ -1,4 +1,3 @@
-from bfs_battle_for_supremacy.game_logic.entities.card import Card
 from bfs_battle_for_supremacy.game_logic.utilities.ai_handler import AiHandler
 from bfs_battle_for_supremacy.game_logic.managers.resources_manager import (
     ResourcesManager,
@@ -14,14 +13,11 @@ class CardsManager:
     @staticmethod
     def provide_card():
         CardsManager.loading = True
-        card_data = AiHandler.send_card_request()
 
-        card_type = card_data.get("type")
-        if not card_type:
+        card = AiHandler.send_card_request()
+        if not card.type:
             CardsManager.loading = False
             return None
-
-        card = Card(**card_data)
 
         CardsManager.current_card = card
         CardsManager.loading = False
