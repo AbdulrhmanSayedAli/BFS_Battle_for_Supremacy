@@ -24,7 +24,7 @@ class PlayerManager:
         current_player = PlayerManager.players[
             PlayerManager.current_player_index
         ]
-        card = CardsManager.provide_card(current_player)
+        card = CardsManager.provide_card()
         return card
 
     @staticmethod
