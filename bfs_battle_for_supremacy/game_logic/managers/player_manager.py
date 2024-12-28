@@ -6,6 +6,7 @@ from bfs_battle_for_supremacy.game_logic.managers.map_manager import MapManager
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 import asyncio
 
+
 class PlayerManager:
     players = [Player("Player 1"), Player("Player 2")]
     current_player_index = 0
@@ -18,6 +19,7 @@ class PlayerManager:
         MapManager.reset_movement_counter()
         MapManager.reset_selection()
         MapManager.reset_attack_counter()
+        PlayerManager.process_recurring_costs()
 
     @staticmethod
     def request_card():

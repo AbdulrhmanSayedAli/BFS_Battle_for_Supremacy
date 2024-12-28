@@ -10,13 +10,14 @@ class CardsParser:
     @staticmethod
     def _parse_cards():
         for card_json in CARDS_LIST:
+            print(card_json)
+            image = card_json.get("image", "common_image.webp")
+            image = os.path.join(IMAGES_PATH, image)
             CardsParser.cards.append(
                 Card(
-                    {
+                    **{
                         **card_json,
-                        "image": os.path.join(
-                            IMAGES_PATH, "common_image.webp"
-                        ),
+                        "image": image,
                     }
                 )
             )

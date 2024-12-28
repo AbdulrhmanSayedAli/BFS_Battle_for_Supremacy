@@ -49,12 +49,13 @@ class CardsManager:
             ResourcesManager.add_resources(
                 player.resources, card.yields["instant"]
             )
-
-        if MapManager.place_item(target_square, card):
-            card.location = target_square
-            player.add_card(card)
-            return True
-        return False
+        if target_square:
+            if MapManager.place_item(target_square, card):
+                card.location = target_square
+                player.add_card(card)
+                return True
+            return False
+        return True
 
     @staticmethod
     def process_recurring_effects(player, enemy_player):

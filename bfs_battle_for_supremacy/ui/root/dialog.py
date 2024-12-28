@@ -15,6 +15,8 @@ from bfs_battle_for_supremacy.config import (
 )
 from typing import Callable
 import pygame
+from bfs_battle_for_supremacy.config import IMAGES_PATH
+import os
 
 
 class Dialog(Container, KeyboardEventHandler):
@@ -23,12 +25,14 @@ class Dialog(Container, KeyboardEventHandler):
         self,
         title_text: str,
         body_text: str,
+        image_path: str = None,
         background_color=(0, 0, 0, 0),
         on_ok: Callable = None,
         on_cancel: Callable = None,
     ):
         self.on_ok = on_ok
         self.on_cancel = on_cancel
+        self.image_path = image_path
         self.title = Text(
             0,
             0,
@@ -87,18 +91,37 @@ class Dialog(Container, KeyboardEventHandler):
                 self.details,
             ],
         )
+        from bfs_battle_for_supremacy.ui.root import Image
+
+        container_components = [
+            Rectangle(0, 0, WIDTH, HEIGHT, background_color=(0, 0, 0, 150)),
+            self.dialog_container,
+        ]
+
+        if self.image_path:
+            container_components.append(
+                Center(
+                    0,
+                    0,
+                    WIDTH,
+                    200,
+                    Image(
+                        0,
+                        0,
+                        200,
+                        200,
+                        self.image_path,
+                    ),
+                ),
+            )
+
         Container.__init__(
             self,
             0,
             0,
             WIDTH,
             HEIGHT,
-            [
-                Rectangle(
-                    0, 0, WIDTH, HEIGHT, background_color=(0, 0, 0, 150)
-                ),
-                self.dialog_container,
-            ],
+            container_components,
         )
 
         self._title_text = title_text

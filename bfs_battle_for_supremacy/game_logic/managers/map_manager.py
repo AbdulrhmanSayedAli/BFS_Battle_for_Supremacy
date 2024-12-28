@@ -73,38 +73,43 @@ class MapManager:
                     MapManager.current_position = square
                     MapManager.current_object = content
                     MapManager.selection_counter = 1
-                    print( f"Selected object: {content}.")
+                    print(f"Selected object: {content}.")
+                    return
                 else:
-                    print( "Invalid selection. Please select a valid object.")
+                    print("Invalid selection. Please select a valid object.")
+                    return
             else:
-                return print("Invalid selection. Square is empty.")
+                print("Invalid selection. Square is empty.")
+                return
 
         elif MapManager.selection_counter == 1:
             content = square.get_content()
-            print("contene",content)
-            print("current_player",current_player)
             if content == current_player or (
                 isinstance(content, Card) and content in current_player.cards
             ):
                 MapManager.current_position = square
                 MapManager.current_object = content
-                print( f"Re-selected object: {content}.")
-
-            if content and ((
-                isinstance(content, Card)
-                and content not in current_player.cards
-            ) or content != current_player):
+                print(f"Re-selected object: {content}.")
+                return
+            if content and (
+                (
+                    isinstance(content, Card)
+                    and content not in current_player.cards
+                )
+                or content != current_player
+            ):
                 current_attacker = MapManager.current_object
                 attack_count = MapManager.attack_counter.get(
                     current_attacker, 0
                 )
 
                 if attack_count >= MapManager.limit_attack_counter:
-                    print (
+                    print(
                         f"{current_attacker} has already attacked "
                         + f"{MapManager.limit_attack_counter}"
                         + " this turn. Cannot attack again."
                     )
+                    return
 
                 nearest_squares = (
                     MapManager.find_nearest_empty_squares_limited(square)
@@ -120,33 +125,39 @@ class MapManager:
                                 )
                                 + 1
                             )
-                            print( f"Attacked {content} successfully.")
-                    print (
+                            print(f"Attacked {content} successfully.")
+                            return
+                    print(
                         "No valid path to any nearby square. "
                         + "Attack failed."
                     )
+                    return
                 else:
-                    print (
+                    print(
                         "No empty squares near the target. "
                         + "Attack not possible."
                     )
+                    return
 
             elif MapManager.check_availability(square):
                 MapManager.target_position = square
                 MapManager.selection_counter = 2
                 await MapManager.move_with_bfs()
-                print( 
+                print(
                     "Moved to target position: "
                     + f"({square.row}, {square.column})."
                 )
+                return
             else:
-                print( 
+                print(
                     "Target position is not empty. "
                     + "Please select an empty square."
                 )
+                return
 
         else:
-            print( "Ignoring extra selection during movement.")
+            print("Ignoring extra selection during movement.")
+            return
 
     @staticmethod
     def find_nearest_empty_squares_limited(target_square: Square):
@@ -170,12 +181,12 @@ class MapManager:
         if not MapManager.current_position or not MapManager.target_position:
             print("Positions not set. Cannot move object.")
             return False
-        
-        path:list[Square] = MapManager.bfs_path_finding(
+
+        path: list[Square] = MapManager.bfs_path_finding(
             MapManager.current_position, MapManager.target_position
         )
-        print("current_position",MapManager.current_position)
-        print("target_position",MapManager.target_position)
+        print("current_position", MapManager.current_position)
+        print("target_position", MapManager.target_position)
         print(path)
         if not path:
             print(
