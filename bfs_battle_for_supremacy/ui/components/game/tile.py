@@ -5,8 +5,8 @@ from bfs_battle_for_supremacy.ui.utils import (
     tile_main_color,
     tile_secondary_color,
 )
-from bfs_battle_for_supremacy.config import BOARD_SIZE_HEIGHT
-
+from bfs_battle_for_supremacy.config import BOARD_SIZE_WIDTH
+from bfs_battle_for_supremacy.game_logic.entities.square import Square
 
 class Tile(Component):
     def __init__(
@@ -17,6 +17,7 @@ class Tile(Component):
         height: float,
         pos_x: int,
         pos_y: int,
+        square:Square,
         selected: bool = False,
         image_path: str = None,
         on_click: Callable = None,
@@ -27,6 +28,7 @@ class Tile(Component):
         self.pos_y = pos_y
         self.selected = selected
         self._image_path = image_path
+        self.square = square
         self.image: Image = None
         if self._image_path:
             self.image = Image(
@@ -52,12 +54,15 @@ class Tile(Component):
 
     @image_path.setter
     def image_path(self, value):
-        self._image_path = value
-        self.image = Image(0, 0, self.rect.width, self.rect.height, value)
+        if(value):
+            self._image_path = value
+            self.image = Image(0, 0, self.rect.width, self.rect.height, value)
+        else:
+            self.image = None
 
     @property
     def pos(self):
-        return BOARD_SIZE_HEIGHT * self.pos_y + self.pos_x
+        return BOARD_SIZE_WIDTH * self.pos_y + self.pos_x
 
     @property
     def board_color(self):

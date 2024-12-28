@@ -1,6 +1,11 @@
+import os
+from config import *
 from bfs_battle_for_supremacy.game_logic.entities.map import Map
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 from bfs_battle_for_supremacy.game_logic.entities.card import Card
+from bfs_battle_for_supremacy.game_logic.entities.player import Player
+from bfs_battle_for_supremacy.game_logic.entities.rock import Rock
+import random
 from collections import deque
 import asyncio
 
@@ -15,6 +20,34 @@ class MapManager:
     selection_counter = 0
     limit_attack_counter = 2
     attack_counter = {}
+
+    @staticmethod
+    def initialize_map(player1: Player, player2: Player):
+
+        player1_square = MapManager.game_map.get_square(0, 0)
+        if player1_square:
+            MapManager.place_item(player1_square, player1)
+            player1.position = player1_square
+
+        rows = len(MapManager.game_map.grid)
+        cols = len(MapManager.game_map.grid[0])
+        player2_square = MapManager.game_map.get_square(rows - 1, cols - 1)
+        if player2_square:
+            MapManager.place_item(player2_square, player2)
+            player2.position = player2_square
+
+        rock_image_path = os.path.join(IMAGES_PATH, "rock.png")
+        for _ in range(ROCK_NUM):
+            while True:
+                random_row = random.randint(0, rows - 1)
+                random_col = random.randint(0, cols - 1)
+                random_square = MapManager.game_map.get_square(
+                    random_row, random_col
+                )
+                if random_square and random_square.is_empty:
+                    rock = Rock(image_path=rock_image_path)
+                    MapManager.place_item(random_square, rock)
+                    break
 
     @staticmethod
     def reset_movement_counter():
@@ -40,33 +73,34 @@ class MapManager:
                     MapManager.current_position = square
                     MapManager.current_object = content
                     MapManager.selection_counter = 1
-                    return f"Selected object: {content}."
+                    print( f"Selected object: {content}.")
                 else:
-                    return "Invalid selection. Please select a valid object."
+                    print( "Invalid selection. Please select a valid object.")
             else:
-                return "Invalid selection. Square is empty."
+                return print("Invalid selection. Square is empty.")
 
         elif MapManager.selection_counter == 1:
             content = square.get_content()
-
+            print("contene",content)
+            print("current_player",current_player)
             if content == current_player or (
                 isinstance(content, Card) and content in current_player.cards
             ):
                 MapManager.current_position = square
                 MapManager.current_object = content
-                return f"Re-selected object: {content}."
+                print( f"Re-selected object: {content}.")
 
-            if (
+            if content and ((
                 isinstance(content, Card)
                 and content not in current_player.cards
-            ) or content != current_player:
+            ) or content != current_player):
                 current_attacker = MapManager.current_object
                 attack_count = MapManager.attack_counter.get(
                     current_attacker, 0
                 )
 
                 if attack_count >= MapManager.limit_attack_counter:
-                    return (
+                    print (
                         f"{current_attacker} has already attacked "
                         + f"{MapManager.limit_attack_counter}"
                         + " this turn. Cannot attack again."
@@ -78,9 +112,7 @@ class MapManager:
                 if nearest_squares:
                     for nearest_square in nearest_squares:
                         MapManager.target_position = nearest_square
-                        success = await MapManager.move_with_bfs(
-                            current_player, attack_target=content
-                        )
+                        success = await MapManager.move_with_bfs()
                         if success:
                             MapManager.attack_counter[current_attacker] = (
                                 MapManager.attack_counter.get(
@@ -88,13 +120,13 @@ class MapManager:
                                 )
                                 + 1
                             )
-                            return f"Attacked {content} successfully."
-                    return (
+                            print( f"Attacked {content} successfully.")
+                    print (
                         "No valid path to any nearby square. "
                         + "Attack failed."
                     )
                 else:
-                    return (
+                    print (
                         "No empty squares near the target. "
                         + "Attack not possible."
                     )
@@ -102,19 +134,19 @@ class MapManager:
             elif MapManager.check_availability(square):
                 MapManager.target_position = square
                 MapManager.selection_counter = 2
-                await MapManager.move_with_bfs(current_player)
-                return (
+                await MapManager.move_with_bfs()
+                print( 
                     "Moved to target position: "
                     + f"({square.row}, {square.column})."
                 )
             else:
-                return (
+                print( 
                     "Target position is not empty. "
                     + "Please select an empty square."
                 )
 
         else:
-            return "Ignoring extra selection during movement."
+            print( "Ignoring extra selection during movement.")
 
     @staticmethod
     def find_nearest_empty_squares_limited(target_square: Square):
@@ -138,11 +170,13 @@ class MapManager:
         if not MapManager.current_position or not MapManager.target_position:
             print("Positions not set. Cannot move object.")
             return False
-
-        path = MapManager.bfs_path_finding(
+        
+        path:list[Square] = MapManager.bfs_path_finding(
             MapManager.current_position, MapManager.target_position
         )
-
+        print("current_position",MapManager.current_position)
+        print("target_position",MapManager.target_position)
+        print(path)
         if not path:
             print(
                 "No valid path to target position"
@@ -164,6 +198,10 @@ class MapManager:
         for step in path[1:]:
             MapManager.remove_item(MapManager.current_position)
             MapManager.place_item(step, item)
+            if isinstance(item, Card):
+                item.location = step
+            elif isinstance(item, Player):
+                item.position = step
             MapManager.current_position = step
             print(f"Moved {item} to ({step.row}, {step.column})")
             await asyncio.sleep(delay)
