@@ -1,4 +1,3 @@
-from bfs_battle_for_supremacy.game_logic.entities.card import Card
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 from bfs_battle_for_supremacy.game_logic.utilities.ai_handler import AiHandler
 from bfs_battle_for_supremacy.game_logic.managers.resources_manager import (
@@ -18,14 +17,11 @@ class CardsManager:
     @staticmethod
     def provide_card():
         CardsManager.loading = True
-        card_data = AiHandler.send_card_request()
 
-        card_type = card_data.get("type")
-        if not card_type:
+        card = AiHandler.send_card_request()
+        if not card.type:
             CardsManager.loading = False
             return None
-
-        card = Card(**card_data)
 
         CardsManager.current_card = card
         CardsManager.loading = False
@@ -35,9 +31,6 @@ class CardsManager:
 
     @staticmethod
     def activate_card(card, player, enemy_player, target_square: Square):
-        if not ResourcesManager.can_afford_card(player.resources, card.cost):
-            return False
-
         ResourcesManager.deduct_resources(player.resources, card.cost)
 
         if card.effects_on_me.get("instant"):
@@ -52,12 +45,13 @@ class CardsManager:
             ResourcesManager.add_resources(
                 player.resources, card.yields["instant"]
             )
-
-        if MapManager.place_item(target_square, card):
-            card.location = target_square
-            player.add_card(card)
-            return True
-        return False
+        if target_square:
+            if MapManager.place_item(target_square, card):
+                card.location = target_square
+                player.add_card(card)
+                return True
+            return False
+        return True
 
     @staticmethod
     def process_recurring_effects(player, enemy_player):
@@ -74,23 +68,21 @@ class CardsManager:
                     player.resources, card.yields["each_turn"]
                 )
                 results.append(
-                    f"Card {card.title} generated resources: "
+                    "Card generated resources: "
                     + f"{card.yields['each_turn']}."
                 )
 
             ResourcesManager.deduct_resources(
                 player.resources, card.recurring_cost
             )
-            results.append(
-                f"Card {card.title} deducted resources: {card.recurring_cost}."
-            )
+            results.append(f"Card deducted resources: {card.recurring_cost}.")
 
             if card.effects_on_me.get("each_turn"):
                 CardsManager.apply_effects(
                     player, card.effects_on_me["each_turn"]
                 )
                 results.append(
-                    f"Card {card.title} applied effects on player: "
+                    "Card applied effects on player: "
                     + f"{card.effects_on_me['each_turn']}."
                 )
             if card.effects_on_enemy.get("each_turn"):
@@ -98,14 +90,8 @@ class CardsManager:
                     enemy_player, card.effects_on_enemy["each_turn"]
                 )
                 results.append(
-                    f"Card {card.title} applied effects on enemy: "
+                    "Card applied effects on enemy: "
                     + f"{card.effects_on_enemy['each_turn']}."
-                )
-
-            if card.valid_for > 0:
-                card.valid_for -= 1
-                results.append(
-                    f"Card {card.title} validity reduced to {card.valid_for}."
                 )
 
         if player.resources.is_negative():
@@ -143,29 +129,31 @@ class CardsManager:
 
     @staticmethod
     def apply_effects(player, effects):
+        from bfs_battle_for_supremacy.game_logic.managers.player_manager import (
+            PlayerManager,
+        )
+
         if "on_player" in effects:
             player.health += effects["on_player"].get("health", 0)
+            if player.health <= 0:
+                player.has_lost = True
 
         if "on_monsters" in effects:
             health_effect = effects["on_monsters"].get("health", 0)
             damage_effect = effects["on_monsters"].get("damage", 0)
-            num_monsters = effects["on_monsters"].get("number_of_monsters", -1)
 
             cards_to_affect = [
-                card
-                for card in player.cards
-                if card.type in {"monster", "building"}
+                card for card in player.cards if card.type in {"monster"}
             ]
 
-            monsters_to_affect = (
-                cards_to_affect
-                if num_monsters == -1
-                else cards_to_affect[:num_monsters]
-            )
+            monsters_to_affect = cards_to_affect
             for card in monsters_to_affect:
                 card.health += health_effect
-                card.damage += damage_effect
+                card.damage = max(card.damage + damage_effect, 1)
                 print(
-                    f"{card.title} health updated to {card.health}, "
+                    f"health updated to {card.health}, "
                     f"damage updated to {card.damage}."
                 )
+
+                if card.health <= 0:
+                    PlayerManager.remove_card(player, card.location)

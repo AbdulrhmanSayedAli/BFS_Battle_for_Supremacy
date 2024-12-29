@@ -4,27 +4,44 @@ from bfs_battle_for_supremacy.game_logic.managers.cards_manager import (
 )
 from bfs_battle_for_supremacy.game_logic.managers.map_manager import MapManager
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
+import asyncio
 
 
 class PlayerManager:
     players = [Player("Player 1"), Player("Player 2")]
     current_player_index = 0
+    card_drawn_this_turn = [False, False]
 
     @staticmethod
     def toggle_turn():
+        PlayerManager.card_drawn_this_turn[
+            PlayerManager.current_player_index
+        ] = False
         PlayerManager.current_player_index = (
             1 - PlayerManager.current_player_index
         )
         MapManager.reset_movement_counter()
         MapManager.reset_selection()
         MapManager.reset_attack_counter()
+        PlayerManager.process_recurring_costs()
 
     @staticmethod
     def request_card():
         current_player = PlayerManager.players[
             PlayerManager.current_player_index
         ]
-        card = CardsManager.provide_card(current_player)
+
+        if PlayerManager.card_drawn_this_turn[
+            PlayerManager.current_player_index
+        ]:
+            print(f"{current_player.name} has already drawn a card this turn.")
+            return None
+
+        card = CardsManager.provide_card()
+        if card:
+            PlayerManager.card_drawn_this_turn[
+                PlayerManager.current_player_index
+            ] = True
         return card
 
     @staticmethod
@@ -56,9 +73,20 @@ class PlayerManager:
         return results
 
     @staticmethod
-    async def select_square_for_current_player(square: Square):
+    def select_square_for_current_player(square: Square):
         current_player = PlayerManager.players[
             PlayerManager.current_player_index
         ]
-        result = await MapManager.select_square(square, current_player)
-        return result
+        asyncio.run(MapManager.select_square(square, current_player))
+
+    @staticmethod
+    def remove_card(player, square):
+        if isinstance(player, int):
+            player = PlayerManager.players[player]
+        card = square.get_content()
+        if card not in player.cards:
+            print("card not found.")
+            return False
+        player.cards.remove(card)
+        MapManager.remove_item(square)
+        print(f"card {card.title} removed.")

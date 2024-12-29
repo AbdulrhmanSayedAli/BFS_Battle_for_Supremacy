@@ -11,15 +11,19 @@ class Container(Component):
         width: float,
         height: float,
         components: list[Component],
+        color=(0, 0, 0, 0),
         on_click: Callable = None,
         on_hover: Callable = None,
         on_hover_end: Callable = None,
     ):
+        print("constructor: ", color)
         super().__init__(x, y, width, height, on_click, on_hover, on_hover_end)
         self.components = components
+        self.color = color
 
     def draw(self, screen: pygame.Surface):
-        self.fill((0, 0, 0, 0))
+        if self.color:
+            self.fill(self.color)
         for component in self.components:
             component.draw(self)
         super().draw(screen)

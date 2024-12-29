@@ -15,3 +15,6 @@ class Square:
 
     def get_content(self):
         return self.content
+
+    # def __str__(self):
+    #     return f"{self.row} {self.column}"
