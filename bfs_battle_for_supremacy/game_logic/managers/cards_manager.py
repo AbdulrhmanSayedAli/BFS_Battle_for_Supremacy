@@ -31,9 +31,6 @@ class CardsManager:
 
     @staticmethod
     def activate_card(card, player, enemy_player, target_square: Square):
-        if not ResourcesManager.can_afford_card(player.resources, card.cost):
-            return False
-
         ResourcesManager.deduct_resources(player.resources, card.cost)
 
         if card.effects_on_me.get("instant"):
@@ -71,23 +68,21 @@ class CardsManager:
                     player.resources, card.yields["each_turn"]
                 )
                 results.append(
-                    f"Card {card.title} generated resources: "
+                    f"Card generated resources: "
                     + f"{card.yields['each_turn']}."
                 )
 
             ResourcesManager.deduct_resources(
                 player.resources, card.recurring_cost
             )
-            results.append(
-                f"Card {card.title} deducted resources: {card.recurring_cost}."
-            )
+            results.append(f"Card deducted resources: {card.recurring_cost}.")
 
             if card.effects_on_me.get("each_turn"):
                 CardsManager.apply_effects(
                     player, card.effects_on_me["each_turn"]
                 )
                 results.append(
-                    f"Card {card.title} applied effects on player: "
+                    f"Card applied effects on player: "
                     + f"{card.effects_on_me['each_turn']}."
                 )
             if card.effects_on_enemy.get("each_turn"):
@@ -95,7 +90,7 @@ class CardsManager:
                     enemy_player, card.effects_on_enemy["each_turn"]
                 )
                 results.append(
-                    f"Card {card.title} applied effects on enemy: "
+                    f"Card applied effects on enemy: "
                     + f"{card.effects_on_enemy['each_turn']}."
                 )
 
@@ -134,8 +129,14 @@ class CardsManager:
 
     @staticmethod
     def apply_effects(player, effects):
+        from bfs_battle_for_supremacy.game_logic.managers.player_manager import (
+            PlayerManager,
+        )
+
         if "on_player" in effects:
             player.health += effects["on_player"].get("health", 0)
+            if player.health <= 0:
+                player.has_lost = True
 
         if "on_monsters" in effects:
             health_effect = effects["on_monsters"].get("health", 0)
@@ -148,8 +149,11 @@ class CardsManager:
             monsters_to_affect = cards_to_affect
             for card in monsters_to_affect:
                 card.health += health_effect
-                card.damage += damage_effect
+                card.damage = max(card.damage + damage_effect, 1)
                 print(
-                    f"{card.title} health updated to {card.health}, "
+                    f"health updated to {card.health}, "
                     f"damage updated to {card.damage}."
                 )
+
+                if card.health <= 0:
+                    PlayerManager.remove_card(player, card.location)

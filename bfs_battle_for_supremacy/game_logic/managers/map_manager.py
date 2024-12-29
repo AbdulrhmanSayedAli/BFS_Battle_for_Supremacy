@@ -244,7 +244,14 @@ class MapManager:
             )
             if attack_target.health <= 0:
                 print(f"{attack_target_name} has been destroyed.")
-                MapManager.remove_item(attack_position)
+                from bfs_battle_for_supremacy.game_logic.managers.player_manager import (
+                    PlayerManager,
+                )
+
+                PlayerManager.remove_card(
+                    (PlayerManager.current_player_index + 1) % 2,
+                    attack_position,
+                )
 
         MapManager.movement_counter -= distance
         print(f"Remaining movement points: {MapManager.movement_counter}")

@@ -78,3 +78,15 @@ class PlayerManager:
             PlayerManager.current_player_index
         ]
         asyncio.run(MapManager.select_square(square, current_player))
+
+    @staticmethod
+    def remove_card(player, square):
+        if isinstance(player, int):
+            player = PlayerManager.players[player]
+        card = square.get_content()
+        if card not in player.cards:
+            print("card not found.")
+            return False
+        player.cards.remove(card)
+        MapManager.remove_item(square)
+        print(f"card {card.title} removed.")
