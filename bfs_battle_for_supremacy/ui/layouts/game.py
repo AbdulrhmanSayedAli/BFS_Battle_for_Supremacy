@@ -1,6 +1,7 @@
 import os
 from bfs_battle_for_supremacy.game_logic.entities.card import Card
 from bfs_battle_for_supremacy.game_logic.entities.rock import Rock
+from bfs_battle_for_supremacy.ui.engine import Engine
 from bfs_battle_for_supremacy.ui.root import Layout, Button
 from bfs_battle_for_supremacy.ui.components.game.board import Board
 from bfs_battle_for_supremacy.ui.utils import get_font
@@ -218,3 +219,9 @@ class Game(Layout):
             self.selection.components[0].text = "Player 1 turn"
         else:
             self.selection.components[0].text = "Player 2 turn"
+        lost1 = PlayerManager.players[0].has_lost
+        lost2 = PlayerManager.players[1].has_lost
+        if lost1:
+            Engine.navigate(2)
+        if lost2:
+            Engine.navigate(2)
