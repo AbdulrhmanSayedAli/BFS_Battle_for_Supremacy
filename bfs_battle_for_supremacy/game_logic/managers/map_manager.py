@@ -24,31 +24,43 @@ class MapManager:
 
     @staticmethod
     def initialize_map(player1: Player, player2: Player):
+        def is_path_between_players():
+            return bool(
+                MapManager.bfs_path_finding(player1.position, player2.position)
+            )
 
-        player1_square = MapManager.game_map.get_square(0, 0)
-        if player1_square:
+        while True:
+            MapManager.game_map = Map(10, 10)
+
+            player1_square = MapManager.game_map.get_square(0, 0)
             MapManager.place_item(player1_square, player1)
             player1.position = player1_square
 
-        rows = len(MapManager.game_map.grid)
-        cols = len(MapManager.game_map.grid[0])
-        player2_square = MapManager.game_map.get_square(rows - 1, cols - 1)
-        if player2_square:
+            rows, cols = len(MapManager.game_map.grid), len(
+                MapManager.game_map.grid[0]
+            )
+            player2_square = MapManager.game_map.get_square(rows - 1, cols - 1)
             MapManager.place_item(player2_square, player2)
             player2.position = player2_square
 
-        rock_image_path = os.path.join(IMAGES_PATH, "rock.png")
-        for _ in range(ROCK_NUM):
-            while True:
-                random_row = random.randint(0, rows - 1)
-                random_col = random.randint(0, cols - 1)
-                random_square = MapManager.game_map.get_square(
-                    random_row, random_col
-                )
-                if random_square and random_square.is_empty:
-                    rock = Rock(image_path=rock_image_path)
-                    MapManager.place_item(random_square, rock)
-                    break
+            rock_image_path = os.path.join(IMAGES_PATH, "rock.png")
+            for _ in range(ROCK_NUM):
+                while True:
+                    random_row = random.randint(0, rows - 1)
+                    random_col = random.randint(0, cols - 1)
+                    random_square = MapManager.game_map.get_square(
+                        random_row, random_col
+                    )
+
+                    if random_square and random_square.is_empty:
+                        rock = Rock(image_path=rock_image_path)
+                        MapManager.place_item(random_square, rock)
+                        break
+
+            if is_path_between_players():
+                break
+
+            print("No path between players. Regenerating map...")
 
     @staticmethod
     def reset_movement_counter():

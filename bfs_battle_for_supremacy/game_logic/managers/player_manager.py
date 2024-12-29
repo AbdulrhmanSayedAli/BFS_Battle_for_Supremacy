@@ -14,6 +14,8 @@ class PlayerManager:
 
     @staticmethod
     def toggle_turn():
+        if MapManager.is_moving:
+            return
         PlayerManager.card_drawn_this_turn[
             PlayerManager.current_player_index
         ] = False
