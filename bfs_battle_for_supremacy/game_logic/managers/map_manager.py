@@ -1,5 +1,4 @@
 import os
-from config import *
 from bfs_battle_for_supremacy.game_logic.entities.map import Map
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 from bfs_battle_for_supremacy.game_logic.entities.card import Card
@@ -8,6 +7,7 @@ from bfs_battle_for_supremacy.game_logic.entities.rock import Rock
 import random
 from collections import deque
 import asyncio
+from bfs_battle_for_supremacy.config import IMAGES_PATH, ROCK_NUM
 
 
 class MapManager:
@@ -20,6 +20,7 @@ class MapManager:
     selection_counter = 0
     limit_attack_counter = 2
     attack_counter = {}
+    is_moving = False
 
     @staticmethod
     def initialize_map(player1: Player, player2: Player):
@@ -67,7 +68,7 @@ class MapManager:
                 content = square.get_content()
                 if content == current_player or (
                     isinstance(content, Card)
-                    and content.type in ["monster", "building"]
+                    and content.type in ["monster"]
                     and content in current_player.cards
                 ):
                     MapManager.current_position = square
@@ -106,8 +107,8 @@ class MapManager:
                 if attack_count >= MapManager.limit_attack_counter:
                     print(
                         f"{current_attacker} has already attacked "
-                        + f"{MapManager.limit_attack_counter}"
-                        + " this turn. Cannot attack again."
+                        + f"{MapManager.limit_attack_counter} times this turn."
+                        + "Cannot attack again."
                     )
                     return
 
@@ -139,7 +140,7 @@ class MapManager:
                     )
                     return
 
-            elif MapManager.check_availability(square):
+            elif MapManager.check_availability(square, allow_enemy=False):
                 MapManager.target_position = square
                 MapManager.selection_counter = 2
                 await MapManager.move_with_bfs()
@@ -178,8 +179,18 @@ class MapManager:
 
     @staticmethod
     async def move_with_bfs(delay=0.5, attack_target=None):
+        if MapManager.is_moving:
+            print("Movement is already in progress. Please wait.")
+            return False
+
+        MapManager.is_moving = True
+
+        print(f"CUR-POS : {MapManager.current_position}")
+        print(f"TAR-POS {MapManager.target_position}")
+
         if not MapManager.current_position or not MapManager.target_position:
             print("Positions not set. Cannot move object.")
+            MapManager.is_moving = False
             return False
 
         path: list[Square] = MapManager.bfs_path_finding(
@@ -194,7 +205,21 @@ class MapManager:
                 + f" ({MapManager.target_position.row},"
                 + f" {MapManager.target_position.column})."
             )
+            MapManager.is_moving = False
             return False
+
+        item = MapManager.current_object
+
+        target_content = MapManager.target_position.get_content()
+
+        if isinstance(target_content, Rock):
+            print("Cannot move to a square containing a rock.")
+            MapManager.is_moving = False
+            return False
+
+        if target_content and target_content != item:
+            if len(path) > 1:
+                path = path[:-1]
 
         distance = len(path) - 1
 
@@ -203,9 +228,9 @@ class MapManager:
                 "Move exceeds remaining movement points "
                 + f"({MapManager.movement_counter})."
             )
+            MapManager.is_moving = False
             return False
 
-        item = MapManager.current_object
         for step in path[1:]:
             MapManager.remove_item(MapManager.current_position)
             MapManager.place_item(step, item)
@@ -218,23 +243,25 @@ class MapManager:
             await asyncio.sleep(delay)
 
         if attack_target:
-            print(f"Attacking {attack_target.title} with {item}.")
+            print(f"Attacking {attack_target.name} with {item}.")
             attack_target.health -= item.damage
             print(
-                f"{attack_target.title} took {item.damage} damage. "
+                f"{attack_target.name} took {item.damage} damage. "
                 + f"Remaining health: {attack_target.health}"
             )
             if attack_target.health <= 0:
-                print(f"{attack_target.title} has been destroyed.")
+                print(f"{attack_target.name} has been destroyed.")
                 MapManager.remove_item(MapManager.target_position)
 
         MapManager.movement_counter -= distance
         print(f"Remaining movement points: {MapManager.movement_counter}")
         MapManager.reset_selection()
+
+        MapManager.is_moving = False
         return True
 
     @staticmethod
-    def bfs_path_finding(start_square, target_square):
+    def bfs_path_finding(start_square, target_square, allow_enemy=False):
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         visited = set()
         queue = deque([(start_square, [])])
@@ -258,8 +285,12 @@ class MapManager:
                     next_square = MapManager.game_map.get_square(
                         new_row, new_col
                     )
-                    if (
-                        MapManager.check_availability(next_square)
+                    # next_content = next_square.get_content()
+
+                    if next_square == target_square or (
+                        MapManager.check_availability(
+                            next_square, allow_enemy=allow_enemy
+                        )
                         and next_square not in visited
                     ):
                         queue.append((next_square, path + [current_square]))
@@ -273,8 +304,12 @@ class MapManager:
         )
 
     @staticmethod
-    def check_availability(square: Square):
-        return square.is_empty
+    def check_availability(square, allow_enemy=False):
+        if square.is_empty:
+            return True
+        if allow_enemy and isinstance(square.get_content(), Card):
+            return True
+        return False
 
     @staticmethod
     def place_item(square: Square, item):

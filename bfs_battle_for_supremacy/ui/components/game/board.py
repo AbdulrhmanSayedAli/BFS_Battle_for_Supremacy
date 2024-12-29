@@ -93,7 +93,6 @@ class Board(Container):
                                 ),
                             )
                         )
-                        print("")
                     elif square.content == PlayerManager.players[1]:
                         cur_res.append(
                             Tile(

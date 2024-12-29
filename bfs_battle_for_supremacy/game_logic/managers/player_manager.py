@@ -10,9 +10,13 @@ import asyncio
 class PlayerManager:
     players = [Player("Player 1"), Player("Player 2")]
     current_player_index = 0
+    card_drawn_this_turn = [False, False]
 
     @staticmethod
     def toggle_turn():
+        PlayerManager.card_drawn_this_turn[
+            PlayerManager.current_player_index
+        ] = False
         PlayerManager.current_player_index = (
             1 - PlayerManager.current_player_index
         )
@@ -23,9 +27,7 @@ class PlayerManager:
 
     @staticmethod
     def request_card():
-        current_player = PlayerManager.players[
-            PlayerManager.current_player_index
-        ]
+        PlayerManager.players[PlayerManager.current_player_index]
         card = CardsManager.provide_card()
         return card
 
