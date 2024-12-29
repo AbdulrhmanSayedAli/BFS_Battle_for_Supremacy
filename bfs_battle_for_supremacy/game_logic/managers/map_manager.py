@@ -94,6 +94,12 @@ class MapManager:
                 isinstance(content, Card) and content in current_player.cards
             ):
                 return MapManager.set_selection(square, content)
+
+            if (
+                not isinstance(MapManager.current_object, Player)
+                and MapManager.current_object.type == "building"
+            ):
+                return MapManager.reset_selection()
             if content and (
                 (
                     isinstance(content, Card)
@@ -139,11 +145,6 @@ class MapManager:
                 return
 
             elif MapManager.check_availability(square, allow_enemy=False):
-                if (
-                    not isinstance(MapManager.current_object, Player)
-                    and MapManager.current_object.type == "building"
-                ):
-                    return MapManager.reset_selection()
                 MapManager.target_position = square
                 MapManager.selection_counter = 2
                 await MapManager.move_with_bfs()
