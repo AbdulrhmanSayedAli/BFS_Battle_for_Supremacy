@@ -143,7 +143,6 @@ class Game(Layout):
             self.board.components[
                 square.row * BOARD_SIZE_WIDTH + square.column
             ].selected = True
-        print(PlayerManager.players[0].resources.iron)
         self.stats[0].components[1].text = "Health : " + str(
             PlayerManager.players[0].health
         )
