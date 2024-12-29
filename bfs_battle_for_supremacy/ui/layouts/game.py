@@ -17,9 +17,9 @@ from bfs_battle_for_supremacy.game_logic.managers.player_manager import (
 )
 from bfs_battle_for_supremacy.game_logic.managers.map_manager import MapManager
 from bfs_battle_for_supremacy.game_logic.entities.player import Player
-from bfs_battle_for_supremacy.ui.components.game.tile import Tile
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 from bfs_battle_for_supremacy.ui.root.dialog import Dialog
+
 BOARD_WIDTH = 700
 BOARD_HEIGHT = 700
 SELECTION_WIDTH = 500
@@ -34,7 +34,7 @@ class Game(Layout):
             player1=PlayerManager.players[0], player2=PlayerManager.players[1]
         )
         self.board: Board = Board(0, 0, BOARD_WIDTH, BOARD_HEIGHT)
-        
+
         # self.selection = Button(
         #     BOARD_WIDTH,
         #     0,
@@ -53,65 +53,65 @@ class Game(Layout):
             SELECTION_HEIGHT,
             [
                 Text(
-                        x=20,
-                        y=10,
-                        width=STATS_WIDTH/2,
-                        height=STATS_HEIGHT,
-                        text= str(PlayerManager.current_player_index),
-                        color="red",
-                        secondary_color="red",
-                        font=get_font(30)
-                    ),
+                    x=20,
+                    y=10,
+                    width=STATS_WIDTH / 2,
+                    height=STATS_HEIGHT,
+                    text=str(PlayerManager.current_player_index),
+                    color="red",
+                    secondary_color="red",
+                    font=get_font(30),
+                ),
                 Text(
-                        x=20,
-                        y=50,
-                        width=STATS_WIDTH/2,
-                        height=STATS_HEIGHT,
-                        text= "No items selected",
-                        color="red",
-                        secondary_color="red",
-                        font=get_font(30)
-                    ),
-                    Text(
-                        x=20,
-                        y=90,
-                        width=STATS_WIDTH/2,
-                        height=STATS_HEIGHT,
-                        text= "",
-                        color="red",
-                        secondary_color="red",
-                        font=get_font(30)
-                    ),
-                    Text(
-                        x=20,
-                        y=130,
-                        width=STATS_WIDTH/2,
-                        height=STATS_HEIGHT,
-                        text= "",
-                        color="red",
-                        secondary_color="red",
-                        font=get_font(30)
-                    ),
-                    Text(
-                        x=20,
-                        y=170,
-                        width=STATS_WIDTH/2,
-                        height=STATS_HEIGHT,
-                        text= "",
-                        color="red",
-                        secondary_color="red",
-                        font=get_font(30)
-                    ),
-                    Text(
-                        x=20,
-                        y=210,
-                        width=STATS_WIDTH/2,
-                        height=STATS_HEIGHT,
-                        text= "",
-                        color="red",
-                        secondary_color="red",
-                        font=get_font(30)
-                    )
+                    x=20,
+                    y=50,
+                    width=STATS_WIDTH / 2,
+                    height=STATS_HEIGHT,
+                    text="No items selected",
+                    color="red",
+                    secondary_color="red",
+                    font=get_font(30),
+                ),
+                Text(
+                    x=20,
+                    y=90,
+                    width=STATS_WIDTH / 2,
+                    height=STATS_HEIGHT,
+                    text="",
+                    color="red",
+                    secondary_color="red",
+                    font=get_font(30),
+                ),
+                Text(
+                    x=20,
+                    y=130,
+                    width=STATS_WIDTH / 2,
+                    height=STATS_HEIGHT,
+                    text="",
+                    color="red",
+                    secondary_color="red",
+                    font=get_font(30),
+                ),
+                Text(
+                    x=20,
+                    y=170,
+                    width=STATS_WIDTH / 2,
+                    height=STATS_HEIGHT,
+                    text="",
+                    color="red",
+                    secondary_color="red",
+                    font=get_font(30),
+                ),
+                Text(
+                    x=20,
+                    y=210,
+                    width=STATS_WIDTH / 2,
+                    height=STATS_HEIGHT,
+                    text="",
+                    color="red",
+                    secondary_color="red",
+                    font=get_font(30),
+                ),
             ],
             color="yellow",
         )
@@ -303,9 +303,10 @@ class Game(Layout):
                 ],
             ),
         ]
+
         def monster_dialog_ok():
-            #adding the monster
-            card:Card = PlayerManager.request_card()
+            # adding the monster
+            card: Card = PlayerManager.request_card()
             print(card.title)
             self.remove_component(self.monster_dialog)
 
@@ -339,7 +340,7 @@ class Game(Layout):
             "end turn",
             get_font(30),
             border_radius=10,
-            on_click=PlayerManager.toggle_turn()
+            on_click=PlayerManager.toggle_turn(),
         )
 
         self.add_component(self.board)
@@ -381,44 +382,80 @@ class Game(Layout):
                     ].image_path = None
 
         if MapManager.current_position:
-            square:Square = MapManager.current_position
-            self.board.components[square.row*BOARD_SIZE_WIDTH+square.column].selected = True
+            square: Square = MapManager.current_position
+            self.board.components[
+                square.row * BOARD_SIZE_WIDTH + square.column
+            ].selected = True
 
-        self.stats[0].components[1].text = "Health : "+str(PlayerManager.players[0].health)
-        self.stats[0].components[2].text = "Damage : "+str(PlayerManager.players[0].damage)
-        self.stats[0].components[4].text = "Food : "+str(PlayerManager.players[0].resources.food)
-        self.stats[0].components[5].text = "Coins : "+str(PlayerManager.players[0].resources.coins)
-        self.stats[0].components[6].text = "Wood : "+str(PlayerManager.players[0].resources.wood)
-        self.stats[0].components[7].text = "Iron : "+str(PlayerManager.players[0].resources.iron)
+        self.stats[0].components[1].text = "Health : " + str(
+            PlayerManager.players[0].health
+        )
+        self.stats[0].components[2].text = "Damage : " + str(
+            PlayerManager.players[0].damage
+        )
+        self.stats[0].components[4].text = "Food : " + str(
+            PlayerManager.players[0].resources.food
+        )
+        self.stats[0].components[5].text = "Coins : " + str(
+            PlayerManager.players[0].resources.coins
+        )
+        self.stats[0].components[6].text = "Wood : " + str(
+            PlayerManager.players[0].resources.wood
+        )
+        self.stats[0].components[7].text = "Iron : " + str(
+            PlayerManager.players[0].resources.iron
+        )
 
-        self.stats[1].components[1].text = "Health : "+str(PlayerManager.players[1].health)
-        self.stats[1].components[2].text = "Damage : "+str(PlayerManager.players[1].damage)
-        self.stats[1].components[4].text = "Food : "+str(PlayerManager.players[1].resources.food)
-        self.stats[1].components[5].text = "Coins : "+str(PlayerManager.players[1].resources.coins)
-        self.stats[1].components[6].text = "Wood : "+str(PlayerManager.players[1].resources.wood)
-        self.stats[1].components[7].text = "Iron : "+str(PlayerManager.players[1].resources.iron)
+        self.stats[1].components[1].text = "Health : " + str(
+            PlayerManager.players[1].health
+        )
+        self.stats[1].components[2].text = "Damage : " + str(
+            PlayerManager.players[1].damage
+        )
+        self.stats[1].components[4].text = "Food : " + str(
+            PlayerManager.players[1].resources.food
+        )
+        self.stats[1].components[5].text = "Coins : " + str(
+            PlayerManager.players[1].resources.coins
+        )
+        self.stats[1].components[6].text = "Wood : " + str(
+            PlayerManager.players[1].resources.wood
+        )
+        self.stats[1].components[7].text = "Iron : " + str(
+            PlayerManager.players[1].resources.iron
+        )
         if MapManager.current_position:
-            square:Square = MapManager.current_position
-            if isinstance(square.content,Player):
-                    self.selection.components[2].text=""
-                    self.selection.components[3].text=""
-                    self.selection.components[4].text=""
-                    self.selection.components[5].text=""
-                    if square.content.name=="Player 1":
-                        self.selection.components[1].text="Player 1"
-                    elif square.content.name=="Player 2":
-                        self.selection.components[1].text="Player 2"
-            elif isinstance(square.content,Card):
-                    self.selection.components[1].text="Title : "+square.content.title
-                    self.selection.components[2].text="Description : "+square.content.description
-                    self.selection.components[3].text="Type : "+square.content.type
-                    self.selection.components[4].text="Health : "+square.content.health
-                    self.selection.components[5].text="Damage : "+square.content.damage
-            elif isinstance(square.content,Rock):
-                    self.selection.components[1].text="Rock"
+            square: Square = MapManager.current_position
+            if isinstance(square.content, Player):
+                self.selection.components[2].text = ""
+                self.selection.components[3].text = ""
+                self.selection.components[4].text = ""
+                self.selection.components[5].text = ""
+                if square.content.name == "Player 1":
+                    self.selection.components[1].text = "Player 1"
+                elif square.content.name == "Player 2":
+                    self.selection.components[1].text = "Player 2"
+            elif isinstance(square.content, Card):
+                self.selection.components[1].text = (
+                    "Title : " + square.content.title
+                )
+                self.selection.components[2].text = (
+                    "Description : " + square.content.description
+                )
+                self.selection.components[3].text = (
+                    "Type : " + square.content.type
+                )
+                self.selection.components[4].text = (
+                    "Health : " + square.content.health
+                )
+                self.selection.components[5].text = (
+                    "Damage : " + square.content.damage
+                )
+            elif isinstance(square.content, Rock):
+                self.selection.components[1].text = "Rock"
             else:
-                self.selection.components[1].text="select something"
-        if PlayerManager.current_player_index==0:
-             self.selection.components[0].text="Player 1 turn"
+                self.selection.components[1].text = "select something"
+        if PlayerManager.current_player_index == 0:
+            self.selection.components[0].text = "Player 1 turn"
         else:
-             self.selection.components[0].text="Player 2 turn"
+            self.selection.components[0].text = "Player 2 turn"

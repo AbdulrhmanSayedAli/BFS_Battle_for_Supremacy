@@ -8,13 +8,10 @@ from bfs_battle_for_supremacy.config import (
 )
 import os
 from bfs_battle_for_supremacy.game_logic.managers.map_manager import MapManager
-from bfs_battle_for_supremacy.game_logic.entities.square import Square
-import asyncio
 import threading
 from bfs_battle_for_supremacy.game_logic.managers.player_manager import (
     PlayerManager,
 )
-from bfs_battle_for_supremacy.game_logic.entities.player import Player
 from bfs_battle_for_supremacy.game_logic.entities.card import Card
 from bfs_battle_for_supremacy.game_logic.entities.rock import Rock
 

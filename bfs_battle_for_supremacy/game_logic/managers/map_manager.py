@@ -7,6 +7,7 @@ from bfs_battle_for_supremacy.game_logic.entities.rock import Rock
 import random
 from collections import deque
 import asyncio
+from bfs_battle_for_supremacy.config import IMAGES_PATH, ROCK_NUM
 
 
 class MapManager:
