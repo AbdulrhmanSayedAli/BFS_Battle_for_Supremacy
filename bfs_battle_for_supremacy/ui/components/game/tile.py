@@ -1,5 +1,6 @@
 from typing import Callable
 from pygame.event import Event
+from bfs_battle_for_supremacy.game_logic.managers.player_manager import PlayerManager
 from bfs_battle_for_supremacy.ui.root import Component, Image
 from bfs_battle_for_supremacy.ui.utils import (
     tile_main_color,
@@ -71,7 +72,10 @@ class Tile(Component):
     def board_color(self):
         if self.selected:
             return (227, 135, 109)
-
+        if self.square.content in PlayerManager.players[0].cards:
+            return "red"
+        if self.square.content in PlayerManager.players[1].cards:
+            return "blue"
         return (
             tile_main_color
             if (self.pos + self.pos_y) % 2 == 0

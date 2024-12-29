@@ -247,6 +247,13 @@ class MapManager:
                 from bfs_battle_for_supremacy.game_logic.managers.player_manager import (
                     PlayerManager,
                 )
+                
+                if isinstance(attack_target,Player):
+                    attack_target.has_lost = True
+                    print(attack_target.has_lost)
+                    print(PlayerManager.players[0].has_lost)
+                    print(PlayerManager.players[1].has_lost)
+                    return
 
                 PlayerManager.remove_card(
                     (PlayerManager.current_player_index + 1) % 2,
