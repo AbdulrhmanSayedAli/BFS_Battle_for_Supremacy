@@ -1,4 +1,6 @@
-from bfs_battle_for_supremacy.game_logic.managers.player_manager import PlayerManager
+from bfs_battle_for_supremacy.game_logic.managers.player_manager import (
+    PlayerManager,
+)
 from bfs_battle_for_supremacy.ui.root import (
     Layout,
     Button,
@@ -18,18 +20,20 @@ from bfs_battle_for_supremacy.ui.engine import Engine
 import os
 from bfs_battle_for_supremacy.ui.root.text import Text
 
+
 class GameOver(Layout):
 
     def setup_components(self):
-        self.text = Text(0,
-                         0,
-                         "Red",
-                         "Red",
-                         text="Player1 has lost",
-                         font=get_font(30),
-                         width=230,
-                         height=100
-                         )
+        self.text = Text(
+            0,
+            0,
+            "Red",
+            "Red",
+            text="Player1 has lost",
+            font=get_font(30),
+            width=230,
+            height=100,
+        )
         self.start_button = Button(
             0,
             100,
@@ -89,11 +93,11 @@ class GameOver(Layout):
         self.add_component(
             Image(20, 20, 100, 100, os.path.join(IMAGES_PATH, "icon.webp"))
         )
+
     def update_components(self):
-        lost1=PlayerManager.players[0].has_lost
-        lost2=PlayerManager.players[1].has_lost
+        lost1 = PlayerManager.players[0].has_lost
+        lost2 = PlayerManager.players[1].has_lost
         if lost1:
-            self.text.text="Player1 has lost"
+            self.text.text = "Player1 has lost"
         if lost2:
-            self.text.text="Player2 has lost"
-        
+            self.text.text = "Player2 has lost"

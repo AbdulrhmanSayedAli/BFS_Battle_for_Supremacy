@@ -219,8 +219,8 @@ class Game(Layout):
             self.selection.components[0].text = "Player 1 turn"
         else:
             self.selection.components[0].text = "Player 2 turn"
-        lost1=PlayerManager.players[0].has_lost
-        lost2=PlayerManager.players[1].has_lost
+        lost1 = PlayerManager.players[0].has_lost
+        lost2 = PlayerManager.players[1].has_lost
         if lost1:
             Engine.navigate(2)
         if lost2:

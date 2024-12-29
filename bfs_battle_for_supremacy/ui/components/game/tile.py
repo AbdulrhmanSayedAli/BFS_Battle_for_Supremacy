@@ -1,6 +1,8 @@
 from typing import Callable
 from pygame.event import Event
-from bfs_battle_for_supremacy.game_logic.managers.player_manager import PlayerManager
+from bfs_battle_for_supremacy.game_logic.managers.player_manager import (
+    PlayerManager,
+)
 from bfs_battle_for_supremacy.ui.root import Component, Image
 from bfs_battle_for_supremacy.ui.utils import (
     tile_main_color,

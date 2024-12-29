@@ -6,5 +6,5 @@ from bfs_battle_for_supremacy.ui.layouts.game import Game
 Engine.init()
 
 
-Engine.layouts = [MainMenu(), Game(),GameOver()]
+Engine.layouts = [MainMenu(), Game(), GameOver()]
 Engine.start()
