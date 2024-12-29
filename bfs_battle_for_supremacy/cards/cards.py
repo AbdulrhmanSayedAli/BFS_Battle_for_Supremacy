@@ -1,3 +1,5 @@
+# flake8: noqa
+
 CARDS_LIST = [
     {
         "title": "Inferno Siege Tower",

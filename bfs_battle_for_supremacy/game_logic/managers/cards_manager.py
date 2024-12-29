@@ -1,4 +1,3 @@
-from bfs_battle_for_supremacy.game_logic.entities.card import Card
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 from bfs_battle_for_supremacy.game_logic.utilities.ai_handler import AiHandler
 from bfs_battle_for_supremacy.game_logic.managers.resources_manager import (

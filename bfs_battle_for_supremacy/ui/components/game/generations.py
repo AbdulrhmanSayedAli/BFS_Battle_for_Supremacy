@@ -1,6 +1,5 @@
 from bfs_battle_for_supremacy.ui.root.container import Container
 from bfs_battle_for_supremacy.ui.root.text import Text
-from bfs_battle_for_supremacy.ui.components.game.tile import Tile
 from bfs_battle_for_supremacy.game_logic.managers.player_manager import (
     PlayerManager,
 )

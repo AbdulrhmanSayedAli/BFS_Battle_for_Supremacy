@@ -15,8 +15,6 @@ from bfs_battle_for_supremacy.config import (
 )
 from typing import Callable
 import pygame
-from bfs_battle_for_supremacy.config import IMAGES_PATH
-import os
 
 
 class Dialog(Container, KeyboardEventHandler):
