@@ -68,7 +68,7 @@ class CardsManager:
                     player.resources, card.yields["each_turn"]
                 )
                 results.append(
-                    f"Card generated resources: "
+                    "Card generated resources: "
                     + f"{card.yields['each_turn']}."
                 )
 
@@ -82,7 +82,7 @@ class CardsManager:
                     player, card.effects_on_me["each_turn"]
                 )
                 results.append(
-                    f"Card applied effects on player: "
+                    "Card applied effects on player: "
                     + f"{card.effects_on_me['each_turn']}."
                 )
             if card.effects_on_enemy.get("each_turn"):
@@ -90,7 +90,7 @@ class CardsManager:
                     enemy_player, card.effects_on_enemy["each_turn"]
                 )
                 results.append(
-                    f"Card applied effects on enemy: "
+                    "Card applied effects on enemy: "
                     + f"{card.effects_on_enemy['each_turn']}."
                 )
 

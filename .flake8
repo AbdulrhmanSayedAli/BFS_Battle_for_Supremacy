@@ -1,2 +1,3 @@
-max-line-length = 79
-ignore = E203, W503  # E203 and W503 are commonly ignored in Black-compatible setups
+[flake8]
+max-line-length = 100
+ignore = E203, W503, E722
