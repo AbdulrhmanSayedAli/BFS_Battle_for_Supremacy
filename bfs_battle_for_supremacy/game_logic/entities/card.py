@@ -13,8 +13,6 @@ class Card:
         yields,
         consumes,
         stats,
-        valid_for=10,
-        number_of_uses=1,
         image=None,
         location: Square = None,
         effects_on_me=None,
@@ -24,9 +22,7 @@ class Card:
         self.description = description
         self.ability = ability
         self.type = type
-        self.valid_for = valid_for
         self.rarity = rarity
-        self.number_of_uses = number_of_uses
         self.yields = yields
         self.consumes = consumes
         self.stats = stats

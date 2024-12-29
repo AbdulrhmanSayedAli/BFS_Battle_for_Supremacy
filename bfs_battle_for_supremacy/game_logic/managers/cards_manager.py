@@ -99,12 +99,6 @@ class CardsManager:
                     + f"{card.effects_on_enemy['each_turn']}."
                 )
 
-            if card.valid_for > 0:
-                card.valid_for -= 1
-                results.append(
-                    f"Card {card.title} validity reduced to {card.valid_for}."
-                )
-
         if player.resources.is_negative():
             CardsManager.negative_resources_count[player] += 1
             results.append(
@@ -146,19 +140,12 @@ class CardsManager:
         if "on_monsters" in effects:
             health_effect = effects["on_monsters"].get("health", 0)
             damage_effect = effects["on_monsters"].get("damage", 0)
-            num_monsters = effects["on_monsters"].get("number_of_monsters", -1)
 
             cards_to_affect = [
-                card
-                for card in player.cards
-                if card.type in {"monster", "building"}
+                card for card in player.cards if card.type in {"monster"}
             ]
 
-            monsters_to_affect = (
-                cards_to_affect
-                if num_monsters == -1
-                else cards_to_affect[:num_monsters]
-            )
+            monsters_to_affect = cards_to_affect
             for card in monsters_to_affect:
                 card.health += health_effect
                 card.damage += damage_effect

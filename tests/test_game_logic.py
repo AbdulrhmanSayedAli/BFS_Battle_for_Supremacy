@@ -26,9 +26,7 @@ class TestGameLogic(unittest.TestCase):
             "description": "A powerful dragon",
             "ability": "Fire Breath",
             "type": "monster",
-            "valid_for": -1,
             "rarity": "epic",
-            "number_of_uses": 1,
             "yields": {
                 "each_turn": {"food": 1, "wood": 2, "iron": 0, "coins": 3}
             },
@@ -50,9 +48,7 @@ class TestGameLogic(unittest.TestCase):
             "description": "Produces food",
             "ability": "Harvest",
             "type": "building",
-            "valid_for": 3,
             "rarity": "common",
-            "number_of_uses": 1,
             "yields": {
                 "each_turn": {"food": 2, "wood": 0, "iron": 0, "coins": 0}
             },
@@ -81,9 +77,7 @@ class TestGameLogic(unittest.TestCase):
             description="A powerful dragon",
             ability="Fire Breath",
             stats={"health": 50, "damage": 15},
-            valid_for=-1,
             rarity="epic",
-            number_of_uses=1,
             yields={
                 "each_turn": {"food": 1, "wood": 2, "iron": 0, "coins": 3}
             },
@@ -113,9 +107,7 @@ class TestGameLogic(unittest.TestCase):
             description="Fierce Dragon",
             ability="Fire Breath",
             stats={"health": 50, "damage": 20},
-            valid_for=-1,
             rarity="epic",
-            number_of_uses=1,
             yields={
                 "each_turn": {"food": 1, "wood": 2, "iron": 0, "coins": 3}
             },
