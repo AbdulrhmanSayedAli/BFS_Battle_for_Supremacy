@@ -1,5 +1,5 @@
 class Resources:
-    def __init__(self, food=0, wood=0, iron=0, coins=0):
+    def __init__(self, food=100, wood=100, iron=100, coins=100):
         self.food = food
         self.wood = wood
         self.iron = iron

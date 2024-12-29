@@ -6,12 +6,17 @@ from bfs_battle_for_supremacy.game_logic.managers.map_manager import MapManager
 from bfs_battle_for_supremacy.game_logic.entities.square import Square
 import asyncio
 
+
 class PlayerManager:
     players = [Player("Player 1"), Player("Player 2")]
     current_player_index = 0
+    card_drawn_this_turn = [False, False]
 
     @staticmethod
     def toggle_turn():
+        PlayerManager.card_drawn_this_turn[
+            PlayerManager.current_player_index
+        ] = False
         PlayerManager.current_player_index = (
             1 - PlayerManager.current_player_index
         )
@@ -24,7 +29,18 @@ class PlayerManager:
         current_player = PlayerManager.players[
             PlayerManager.current_player_index
         ]
+
+        if PlayerManager.card_drawn_this_turn[
+            PlayerManager.current_player_index
+        ]:
+            print(f"{current_player.name} has already drawn a card this turn.")
+            return None
+
         card = CardsManager.provide_card(current_player)
+        if card:
+            PlayerManager.card_drawn_this_turn[
+                PlayerManager.current_player_index
+            ] = True
         return card
 
     @staticmethod
