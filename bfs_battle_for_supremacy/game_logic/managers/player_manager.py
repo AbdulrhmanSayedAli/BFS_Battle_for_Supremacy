@@ -27,8 +27,21 @@ class PlayerManager:
 
     @staticmethod
     def request_card():
-        PlayerManager.players[PlayerManager.current_player_index]
+        current_player = PlayerManager.players[
+            PlayerManager.current_player_index
+        ]
+
+        if PlayerManager.card_drawn_this_turn[
+            PlayerManager.current_player_index
+        ]:
+            print(f"{current_player.name} has already drawn a card this turn.")
+            return None
+
         card = CardsManager.provide_card()
+        if card:
+            PlayerManager.card_drawn_this_turn[
+                PlayerManager.current_player_index
+            ] = True
         return card
 
     @staticmethod

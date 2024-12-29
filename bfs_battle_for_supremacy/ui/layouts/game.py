@@ -52,6 +52,8 @@ class Game(Layout):
 
         def draw_card_on_click(c, v):
             card: Card = PlayerManager.request_card()
+            if not card:
+                return
 
             def monster_dialog_ok():
                 if card.type == "effect":
