@@ -124,7 +124,6 @@ class MapManager:
                 path = MapManager.bfs_path_finding(
                     MapManager.current_position,
                     MapManager.target_position,
-                    allow_enemy=True,
                 )
                 if path:
 
